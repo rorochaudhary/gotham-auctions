@@ -13,7 +13,15 @@ def root():
 def post_listing():
     return render_template('post_listing.j2')
 
+@app.route('/signup')
+def signup():
+    return render_template('signup.j2')
+
+@app.route('/test_postings')
+def test_postings():
+    return render_template('test_postings.j2')
+
 # Listener
 if __name__ == "__main__":
-    port = int(os.environ.get('PORT', 9112)) 
-    app.run(port=port, debug=True) 
+    port = int(os.environ.get('PORT', 9112))
+    app.run(port=port, debug=True)
