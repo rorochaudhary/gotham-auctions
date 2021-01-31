@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block stylesheet %}
+<!-- <link rel="stylesheet/css" href="./static/css/signup.css"> -->
+{% endblock %}
+{% block content %}
+    <div class='container pt-5'>
+        <div class='signup-form text-center'>
+            <h3>Enter your details below to create an account!</h3>
+            <form action="#"> <!-- add method="POST" -->
+                <br>
+                <label for='fname'>What's your name?</label>
+                <br>
+                <input type='text' id='fname' name='fname' placeholder='First Name'></input>
+                <input type='text' id='lname' name='lname' placeholder='Last Name'></input>
+                <br>
+                <label for='email'>What's your email?</label><br>
+                <input type='email' id='email' name='email' placeholder='Email'></input>
+                <br>
+                <label for='user'>Enter a Username:</label><br>
+                <input type='text' id='user' name='user'></input>
+                <br>
+                <label for='pass'>Enter a password:</label><br>
+                <input type='password' id='pass' name='pass'></input>
+                <br>
+                <label for='confirm-pass'>Confirm password:</label><br>
+                <input type='password' id='pass-confirm' name='pass-confirm'></input>
+                <br>
+                <br>
+                <input type='submit' value='Create Account' class="btn btn-danger"></input>
+            </form>
+        </div>
+    </div>
+{% endblock %}
