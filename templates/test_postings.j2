@@ -1,14 +1,31 @@
 {% extends 'base.html' %}
 {% block content %}
-<div class="card" style="width: 18rem;">
-  <img src="..." class="card-img-top" alt="...">
-  <div class="card-body">
- 
-    <h5 class="card-title">1974 Ford Mustang</h5>   <!-- year make model of car goes here -->
-    <!-- features go into the p -->
-    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-    <!-- user can place a bid -->
-    <a href="#" class="btn btn-primary">Place Bid</a>
-  </div>
+<div class="container px-4 pt-5">
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+    {% for item in listings.example_listings %}
+        {% if item %}
+        <div class="col">
+            <div class="card">
+            <img src="..." class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">{{item['year']}} {{item['make']}} {{item['model']}}</h5>
+                    <!-- features go into the p -->
+                    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                    <!-- user can place a bid -->
+                    <form class="row" action="#">
+                        <div class="col-auto">
+                            <!-- maybe change placeholder value to highest bid? -->
+                            <input type="number" class="form-control" name="place-bid" id="place-bid placeholder="ex. 25000">
+                        </div>
+                        <div class="col-auto">
+                            <input type="submit" class="btn btn-primary mb-3" value="Place Bid"></input>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    {% endfor %}
+    </div>
 </div>
 {% endblock %}
