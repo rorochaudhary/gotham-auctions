@@ -2,6 +2,7 @@ from flask import Flask, render_template
 import os
 from database import example_listings
 
+
 # Configuration
 app = Flask(__name__)
 
