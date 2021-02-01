@@ -1,52 +1,103 @@
 {% extends "base.html" %}
 {% block content %}
-<div class="container pt-5">
-<div class="listing-form">
-    <h2>Enter your listing information below</h2>
-    <form action="">
-        <label for="fname">Enter your first name</label><br>
-        <input type="text" id="fname" name="fname"><br>
-        <label for="lname">Enter your last name</label><br>
-        <input type="text" id="lname" name="lname"><br>
-        <label for="year">What year is your vehicle?</label><br>
-        <select name="year" id="year">
-        <option selected disabled hidden>Select year</option>
-        <option value="2010">2010</option>
-        <option value="2011">2011</option>
-        <option value="2012">2012</option>
-        <option value="2013">2013</option>
-        <option value="2014">2014</option>
-        <option value="2015">2015</option>
-        </select><br>
-        <label for="make">What make is your vehicle?</label><br>
-        <select name="make" id="make">
-        <option selected disabled hidden>Select make</option>
-        <option value="cheverolet">Cheverolet</option>
-        <option value="mercedes">Mercedes</option>
-        <option value="ford">Ford</option>
-        <option value="volvo">Volvo</option>
-        </select><br>
-        <label for="model">What model is your vehicle?</label><br>
-        <input type="text" id="model" name="model"><br>
-        <label for="mileage">Enter your vehicle's mileage</label><br>
-        <input type="number" id="mileage" name="mileage"><br>
-        <label for="select-feature">Select a feature</label><br>
-        <input type="checkbox" id="feature1" name="feature1" value="manual">
-        <label for="feature1">manual</label><br>
-        <input type="checkbox" id="feature2" name="feature2" value="electric">
-        <label for="feature1">electric</label><br>
-        <input type="checkbox" id="feature3" name="feature3" value="heated seats">
-        <label for="feature1">heated seats</label><br>
-        <label for="enter-feature">Or, enter one below</label><br>
-        <input type="text" id="enter-feature" name="enter-feature"><br>
-        <label for="reserve">Enter the reserve amount (optional)</label><br>
-        <input type="number" id="reserve" name="reserve"><br>
-        <label for="end-date">Set an expiration date for your auction</label><br>
-        <input type="date" id="end-date" name="end-date"><br>
-        <label for="photo">Include a photo of your vehicle</label><br>
-        <input type="file" id="photo" name="photo"><br><br>
-        <input type="submit" value="Submit">
-    </form>
-</div>
-</div>
+<h2 class="text-center mt-5">Submit a Listing</h2>
+<p class="m-5">Submit your listing information below</p>
+<form action="">
+
+    <div class="m-5 w-25">
+        <label for="fname" class="form-label">Enter your first name</label>
+        <input type="text" class="form-control" id="fname" name="fname">
+    </div>
+
+    <div class="m-5 w-25">
+        <label for="lname" class="form-label">Enter your last name</label>
+        <input type="text" class="form-control" id="lname" name="lname">
+    </div>
+
+    <div class="m-5 w-25">
+        <label for="email" class="form-label">Enter your email</label>
+        <input type="email" class="form-control" id="email" name="email">
+    </div>
+
+    <div class="m-5 w-25">
+        <label for="year" class="form-label">Select your vehicle's year</label>
+        <select class="form-select" aria-label="year">
+            <option selected>Select year</option>
+            <option value="2010">2010</option>
+            <option value="2011">2011</option>
+            <option value="2012">2012</option>
+            <option value="2013">2013</option>
+            <option value="2014">2014</option>
+            <option value="2015">2015</option>
+          </select>
+    </div>
+
+    <div class="m-5 w-25">
+        <label for="make" class="form-label">Select your vehicle's make</label>
+        <select class="form-select" aria-label="make">
+            <option selected>Select make</option>
+            <option value="cheverolet">Cheverolet</option>
+            <option value="mercedes">Mercedes</option>
+            <option value="ford">Ford</option>
+            <option value="volvo">Volvo</option>
+          </select>
+    </div>
+
+    <div class="m-5 w-25">
+        <label for="model" class="form-label">Enter your vehicle's model</label>
+        <input type="text" class="form-control" id="model" name="model">
+    </div>
+
+    <div class="m-5 w-25">
+        <label for="mileage" class="form-label">Enter your vehicle's mileage</label>
+        <input type="number" class="form-control" id="mileage" name="mileage">
+    </div>
+    
+    <div class="m-5 w-25">
+        <label for="feature" class="form-label">Select your vehicle's features</label>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="manual" id="manual" name="manual">
+            <label class="form-check-label" for="manual">
+              Manual
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="electric" id="electric" name="electric">
+            <label class="form-check-label" for="electric">
+              Electric
+            </label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="heatedseats" id="heatedseats" name="heatedseats">
+            <label class="form-check-label" for="heatedseats">
+              Heated Seats
+            </label>
+        </div>
+    </div>
+
+    <div class="m-5 w-25">
+        <label for="usrfeature" class="form-label">Or, enter a feature below</label>
+        <input type="text" class="form-control" id="usrfeature" name="usrfeature">
+    </div>
+
+    <div class="m-5 w-25">
+        <label for="reserve" class="form-label">Enter a reserve amount (optional)</label>
+        <input type="number" class="form-control" id="reserve" name="reserve">
+    </div>
+
+    <div class="m-5 w-25">
+        <label for="expiration" class="form-label">Set an expiration date for your auction</label>
+        <input type="date" class="form-control" id="expiration" name="expiration">
+    </div>
+
+    <div class="m-5 w-25">
+        <label for="photo" class="form-label">Include a photo of your vehicle</label>
+        <input class="form-control" type="file" id="photo" name="photo">
+    </div>
+
+    <div class="m-5 w-25">
+        <button class="btn btn-primary" type="submit">Submit Listing</button>
+    </div>
+    
+</form>
 {% endblock %}
