@@ -17,9 +17,9 @@ def post_listing():
 def signup():
     return render_template('signup.j2')
 
-@app.route('/test_postings')
-def test_postings():
-    return render_template('test_postings.j2')
+@app.route('/profile')
+def profile():
+    return render_template('profile.j2')
 
 # Listener
 if __name__ == "__main__":
