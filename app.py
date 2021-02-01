@@ -1,5 +1,7 @@
 from flask import Flask, render_template
 import os
+from database import example_listings
+
 
 # Configuration
 app = Flask(__name__)
@@ -7,7 +9,7 @@ app = Flask(__name__)
 # Routes 
 @app.route('/')
 def root():
-    return render_template('main.j2')
+    return render_template('main.j2', listings=example_listings)
 
 @app.route('/post-listing')
 def post_listing():

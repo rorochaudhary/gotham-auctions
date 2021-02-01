@@ -1,4 +1,44 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Available Listings</h2>
+<div class="container px-4 pt-5">
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+    {% for item in listings.example_listings %}
+        {% if item %}
+        <div class="col">
+            <div class="card">
+            <!-- will have to fill img src from Photos query-->
+            <img src=".\static\img\test_car_img.jpg" class="card-img-top" alt="...">
+                <div class="card-body">
+                    <h5 class="card-title">{{item['year']}} {{item['make']}} {{item['model']}}</h5>
+                    <!-- maybe a separate query to get FeaturesListings? and then build the list of featues from there? -->
+                    <p class="card-text">Quick Description of the car.</p>
+                    <p class="card-text">Here are some of the features:</p>
+                    <ul>
+                        <li>Feature 1</li>
+                        <li>Feature 2</li>
+                        <li>Feature 3</li>
+                        <li>Feature 4</li>
+                        <li>Feature 5</li>
+                    </ul>
+                    <!-- current bid info (high bid, expDate, reserve) -->
+                    <div class="card-footer">
+                        <p class="text-muted">Current Bid: $150000 | Ends: Feb 25th, 2021 | No Reserve</p>
+                    </div>
+                    <!-- user can place a bid -->
+                    <form class="row" action="#">
+                        <div class="col-auto">
+                            <!-- maybe change placeholder value to highest bid? -->
+                            <input type="number" class="form-control" name="place-bid" id="place-bid" placeholder="ex. 25000">
+                        </div>
+                        <div class="col-auto">
+                            <input type="submit" class="btn btn-primary mb-3" value="Place Bid"></input>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    {% endfor %}
+    </div>
+</div>
 {% endblock %}
