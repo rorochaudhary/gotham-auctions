@@ -3,16 +3,16 @@
 <div class="container px-4 pt-5">
     <div class="row justify-content-center">
         <div class='col'>
-            <h1 class="text-center">Current Listings at Gotham</h1>
+            <h1 class="text-center">Active Listings</h1>
         </div>
     </div>
-    <div class="row justify-content-center">
-        <div class='col-offset-4 col-4 pb-3'>
+    <div class="row justify-content-end">
+        <div class='col-4 mb-4'>
             <input type="search" class="form-control" name="searchquery" placeholder="Search listings by make, model, year">
         </div>
     </div>
     <div class="row row-cols-1 row-cols-md-2 g-4">
-    {% for item in listings.example_listings %}
+    {% for item in listings %}
         {% if item %}
         <div class="col">
             <div class="card">
@@ -23,20 +23,33 @@
                     <!-- maybe a separate query to get FeaturesListings? and then build the list of featues from there? -->
                     <!-- description will be added in the near future -->
                     <!-- <p class="card-text">Quick Description of the car.</p> --> 
-                    <p class="card-text">Here are some of the features:</p>
+                    <p class="card-text">Features:</p>
                     <ul>
-                        <li></li>
-                        <li>Feature 2</li>
-                        <li>Feature 3</li>
-                        <li>Feature 4</li>
-                        <li>Feature 5</li>
+                    {% for listings_features in listings_features %}
+                        {% if item['listingID'] == listings_features['listingID']%}
+                            {% for carFeature in features %}
+                                {% if carFeature['featureID'] == listings_features['featureID'] %}
+                                    <li>{{carFeature['carFeature']}}</li>
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
+                    {% endfor %}
                     </ul>
                     <!-- current bid info (high bid, expDate, reserve) -->
                     <div class="card-footer">
-                        <p class="text-muted">Current Bid: $150000 | Ends: Feb 25th, 2021 | No Reserve</p>
-                    </div>
+                        {% if item['bidID'] %}
+                            {% for bid in bids %}
+                                {% if bid['bidID'] == item['bidID'] %}
+                                    <span>Current Bid: {{bid['bidAmt']}}</span>
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            <span>Current Bid: None</span>
+                        {% endif %}
+                        <span>| Ends: {{item['expirationDate']}} | Reserve: {{item['reserve']}}</span>
+                    </div> 
                     <!-- user can place a bid -->
-                    <form class="row" action="#">
+                    <form class="row justify-content-end mt-3" action="#">
                         <div class="col-auto">
                             <!-- maybe change placeholder value to highest bid? -->
                             <input type="number" class="form-control" name="place-bid" id="place-bid" placeholder="ex. 25000">
