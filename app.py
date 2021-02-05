@@ -1,27 +1,150 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request
 import os
-from database import example_listings
+import database.db_connector as db
+from datetime import date
 
 
 # Configuration
 app = Flask(__name__)
+db_conn = db.connect_to_database()
 
-# Routes 
-@app.route('/')
+# Routes
+
+
+@app.route('/', methods=['GET', 'POST'])
 def root():
-    return render_template('main.j2', listings=example_listings)
 
-@app.route('/post-listing')
-def post_listing():
-    return render_template('post_listing.j2')
+    if request.method == 'GET':
 
-@app.route('/signup')
+        # get listings
+        query = "SELECT listingID, bidID, make, model, year, reserve, expirationDate FROM listings;"
+        cursor = db.execute_query(db_connection=db_conn, query=query)
+        listings = cursor.fetchall()
+
+        # get features
+        query = "SELECT featureID, carFeature FROM features;"
+        cursor = db.execute_query(db_connection=db_conn, query=query)
+        features = cursor.fetchall()
+
+        # get listings_features
+        query = "SELECT listingID, featureID FROM FeaturesListings;"
+        cursor = db.execute_query(db_connection=db_conn, query=query)
+        listings_features = cursor.fetchall()
+
+        # get bids
+        query = "SELECT bidID, bidAmt FROM bids;"
+        cursor = db.execute_query(db_connection=db_conn, query=query)
+        bids = cursor.fetchall()
+
+    return render_template('main.j2', listings=listings, listings_features=listings_features, features=features, bids=bids)
+
+
+@app.route('/submit-listing', methods=['GET', 'POST'])
+def submit_listing():
+
+    # display standard features
+    query = "SELECT carFeature FROM features WHERE featureID BETWEEN 1 AND 4;"
+    cursor = db.execute_query(db_connection=db_conn, query=query)
+    features = cursor.fetchall()
+
+    if request.method == 'POST':
+
+        # get form data
+        data = request.form
+
+        # get userID from users table using email
+        query = "SELECT userID FROM users WHERE email = %s;"
+        cursor = db.execute_query(
+            db_connection=db_conn, query=query, query_params=(data['email'],))
+        usr = cursor.fetchall()[0]['userID']
+
+        # get car and auction information
+        make = data['make']
+        model = data['model']
+        year = int(data['year'])
+        mileage = int(data['mileage'])
+        reserve = int(data['reserve'])
+        list_date = date.today()
+        expiration = data['expiration']
+
+        # insert listing info
+        query = "INSERT INTO listings (userID, make, model, year, mileage, reserve, listDate, expirationDate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);"
+        cursor = db.execute_query(
+            db_connection=db_conn, query=query, query_params=(usr, make, model, year, mileage, reserve, list_date, expiration))
+        list_id = cursor.lastrowid
+
+        # get listing features
+        sel_features = request.form.getlist('features')  # selected features
+        usr_feature = request.form['usrfeature']  # inputted feature
+
+        # if included, add inputted feature to table
+        if len(usr_feature) != 0:
+
+            query = "INSERT INTO features (carFeature) VALUES (%s);"
+            db.execute_query(
+                db_connection=db_conn, query=query, query_params=(usr_feature,))
+            sel_features.append(usr_feature)
+
+        # formatting for query params
+        format_str = ','.join(['%s'] * len(sel_features))
+
+        # get all feature ids for this listing
+        query = "SELECT featureID FROM features WHERE carFeature IN (" + \
+            format_str + ");"
+        cursor = db.execute_query(
+            db_connection=db_conn, query=query, query_params=tuple(sel_features))
+        feature_ids = cursor.fetchall()
+
+        # formatting for query params
+        listing_features = []
+        for feature in feature_ids:
+            listing_features.append((list_id, feature['featureID']))
+
+        # insert into FeaturesListings table
+        query = "INSERT INTO FeaturesListings (listingID, featureID) VALUES (%s, %s);"
+        db.execute_many(
+            db_connection=db_conn, query=query, query_params=listing_features)
+
+    return render_template('submit_listing.j2', features=features)
+
+
+@ app.route('/signup', methods=['GET', 'POST'])
 def signup():
+
+    if request.method == 'POST':
+
+        # get form data
+        data = request.form
+        fname = data['fname']
+        lname = data['lname']
+        usr = data['user']
+        pwd = data['pass']
+        email = data['email']
+        date_joined = date.today()
+
+        query = "INSERT INTO users (userName, password, firstName, lastName, email, dateJoined) VALUES (%s, %s, %s, %s, %s, %s);"
+        db.execute_query(
+            db_connection=db_conn, query=query, query_params=(usr, pwd, fname, lname, email, date_joined))
+
     return render_template('signup.j2')
 
-@app.route('/profile')
+
+@ app.route('/profile', methods=['GET', 'POST'])
 def profile():
-    return render_template('profile.j2')
+
+    if request.method == 'GET':
+
+        # get user info
+        query = "SELECT firstName, lastName, email, userName, password, dateJoined FROM users WHERE userID = 1;"
+        cursor = db.execute_query(db_connection=db_conn, query=query)
+        usr = cursor.fetchall()[0]
+
+        # get user listings
+
+        # get user bids
+
+    return render_template('profile.j2', user=usr)
+
 
 # Listener
 if __name__ == "__main__":
