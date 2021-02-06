@@ -75,6 +75,12 @@ CREATE TABLE photos (
     FOREIGN KEY (listingID) REFERENCES listings(listingID)
 );
 
+INSERT INTO photos (listingID, photoPath) VALUES
+    (1, 'static/img/test_car_img.jpg'),
+    (2, 'static/img/test_car_img.jpg'),
+    (3, 'static/img/test_car_img.jpg'),
+    (4, 'static/img/test_car_img.jpg');
+
 CREATE TABLE FeaturesListings (
     listingID INT(11),
     featureID INT(11),

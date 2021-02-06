@@ -2,11 +2,14 @@ from flask import Flask, render_template, request
 import os
 import database.db_connector as db
 from datetime import date
+from werkzeug.utils import secure_filename
 
+UPLOAD_FOLDER = 'static/img/'
 
 # Configuration
 app = Flask(__name__)
 db_conn = db.connect_to_database()
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 # Routes
 
@@ -36,7 +39,12 @@ def root():
         cursor = db.execute_query(db_connection=db_conn, query=query)
         bids = cursor.fetchall()
 
-    return render_template('main.j2', listings=listings, listings_features=listings_features, features=features, bids=bids)
+        # get photos
+        query = "SELECT listingID, photoPath FROM photos;"
+        cursor = db.execute_query(db_connection=db_conn, query=query)
+        photos = cursor.fetchall()
+
+    return render_template('main.j2', listings=listings, listings_features=listings_features, features=features, bids=bids, photos=photos)
 
 
 @app.route('/submit-listing', methods=['GET', 'POST'])
@@ -67,11 +75,22 @@ def submit_listing():
         list_date = date.today()
         expiration = data['expiration']
 
+        # save photo
+        photo = request.files['photo']
+        filename = secure_filename(photo.filename)
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        photo.save(filepath)
+
         # insert listing info
         query = "INSERT INTO listings (userID, make, model, year, mileage, reserve, listDate, expirationDate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);"
         cursor = db.execute_query(
             db_connection=db_conn, query=query, query_params=(usr, make, model, year, mileage, reserve, list_date, expiration))
         list_id = cursor.lastrowid
+
+        # insert photo path for listing
+        query = "INSERT INTO photos (photoPath, listingID) VALUES (%s, %s);"
+        db.execute_query(db_connection=db_conn, query=query,
+                         query_params=(filepath, list_id))
 
         # get listing features
         sel_features = request.form.getlist('features')  # selected features

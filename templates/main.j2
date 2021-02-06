@@ -16,8 +16,11 @@
         {% if item %}
         <div class="col">
             <div class="card">
-            <!-- will have to fill img src from Photos query-->
-            <img src=".\static\img\test_car_img.jpg" class="card-img-top" alt="...">
+            {% for photo in photos %}
+                {% if photo['listingID'] == item['listingID'] %}
+                    <img src="{{photo['photoPath']}}" class="card-img-top" alt="...">
+                {% endif %}
+            {% endfor %}
                 <div class="card-body">
                     <h5 class="card-title">{{item['year']}} {{item['make']}} {{item['model']}}</h5>
                     <!-- maybe a separate query to get FeaturesListings? and then build the list of featues from there? -->

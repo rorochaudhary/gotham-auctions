@@ -6,7 +6,7 @@
             <h2 class="text-center">Submit a Listing</h2>
         </div>
     </div>
-    <form action="/submit-listing" method="POST">
+    <form action="/submit-listing" method="POST" enctype="multipart/form-data">
         <div class="row mt-4">
             <div class="col-4">
                 <label for="fname" class="form-label">First Name</label>
@@ -91,7 +91,7 @@
         <div class="row mt-2">
             <div class="col-4">
                 <label for="photo" class="form-label">Include a photo of your vehicle</label>
-                <input class="form-control" type="file" id="photo" name="photo">
+                <input class="form-control" type="file" id="photo" name="photo" accept="image/*">
             </div>
         </div>
         <div class="row my-5">
