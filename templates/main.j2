@@ -8,7 +8,14 @@
     </div>
     <div class="row justify-content-center">
         <div class='col-offset-4 col-4 pb-3'>
-            <input type="search" class="form-control" name="searchquery" placeholder="Search listings by make, model, year">
+            <input type="search" class="form-control" name="searchquery" placeholder="Search listings by make, model, year, feature">
+            <div class="text-center pt-2">
+                <input type="radio" id="search-filter1" name="search-filter" value="cars"
+                checked>
+                <label for="search-filter">Search cars</label>
+                <input type="radio" id="search-filter2" name="search-filter" value="features">
+                <label for="search-filter">Search features</label>
+            </div>
         </div>
     </div>
     <div class="row row-cols-1 row-cols-md-2 g-4">
@@ -25,7 +32,7 @@
                     <!-- <p class="card-text">Quick Description of the car.</p> --> 
                     <p class="card-text">Here are some of the features:</p>
                     <ul>
-                        <li></li>
+                        <li>Feature 1</li>
                         <li>Feature 2</li>
                         <li>Feature 3</li>
                         <li>Feature 4</li>
