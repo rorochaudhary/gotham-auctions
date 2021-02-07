@@ -4,30 +4,51 @@
 {% endblock %}
 {% block content %}
     <div class='container pt-5'>
-        <div class='signup-form text-center'>
-            <h3>Enter your details below to create an account!</h3>
-            <form action="#"> <!-- add method="POST" -->
-                <br>
-                <label for='fname'>What's your name?</label>
-                <br>
-                <input type='text' id='fname' name='fname' placeholder='First Name'>
-                <input type='text' id='lname' name='lname' placeholder='Last Name'>
-                <br>
-                <label for='email'>What's your email?</label><br>
-                <input type='email' id='email' name='email' placeholder='Email'>
-                <br>
-                <label for='user'>Enter a Username:</label><br>
-                <input type='text' id='user' name='user'>
-                <br>
-                <label for='pass'>Enter a password:</label><br>
-                <input type='password' id='pass' name='pass'>
-                <br>
-                <label for='confirm-pass'>Confirm password:</label><br>
-                <input type='password' id='pass-confirm' name='pass-confirm'>
-                <br>
-                <br>
-                <input type='submit' value='Create Account' class="btn btn-danger">
-            </form>
+        <div class="row mt-4">
+            <div class="col">
+                <h2 class='text-center'>Enter your details below to create an account!</h2>
+            </div>
         </div>
+        <form action="#"> <!-- add method="POST" -->
+            <div class='row mt-4'>
+                <div class="col-4">
+                    <label for='fname' class="form-label">First Name</label>
+                    <input type='text' class="form-control" id='fname' name='fname' placeholder='First Name'>
+                </div>
+                <div class="col-4">
+                    <label for='fname' class="form-label">Last Name</label>
+                    <input type='text' class="form-control" id='lname' name='lname' placeholder='Last Name'>
+                </div>
+            </div>
+            <div class='row mt-4'>
+                <div class="col-4">
+                    <label for='email' class="form-label">Email</label><br>
+                    <input type='email' class="form-control" id='email' name='email' placeholder='Email'>
+                </div>
+            </div>
+            <div class='row mt-4'>
+                <div class="col-4">
+                    <label for='user' class="form-label">Enter a Username:</label>
+                    <input type='text' class="form-control" id='user' name='user'>
+                </div>
+            </div>
+            <div class='row mt-4'>
+                <div class="col-4">
+                    <label for='pass' class="form-label">Enter a password:</label>
+                    <input type='password' class="form-control" id='pass' name='pass'>
+                </div>
+            </div>
+            <div class='row mt-4'>
+                <div class="col-4">
+                    <label for='confirm-pass' class="form-label">Confirm password:</label>
+                    <input type='password' class="form-control" id='pass-confirm' name='pass-confirm'>
+                </div> 
+            </div>
+            <div class='row mt-4'>
+                <div class="col-4">
+                    <input type='submit' value='Create Account' class="btn btn-danger">
+                </div>
+            </div>
+        </form>
     </div>
 {% endblock %}
