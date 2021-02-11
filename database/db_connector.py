@@ -43,9 +43,9 @@ def execute_query(db_connection=None, query=None, query_params=()):
 
     '''
     params = tuple()
-    #create a tuple of paramters to send with the query
+    # create a tuple of paramters to send with the query
     for q in query_params:
-        params = params + (q)
+        params = params + tuple(q)
     '''
     # TODO: Sanitize the query before executing it!!!
     cursor.execute(query, query_params)

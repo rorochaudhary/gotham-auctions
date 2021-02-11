@@ -10,10 +10,9 @@ UPLOAD_FOLDER = 'static/img/'
 app = Flask(__name__)
 db_conn = db.connect_to_database()
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config.from_mapping(SECRET_KEY='dev')
 
 # Routes
-
-
 @app.route('/', methods=['GET', 'POST'])
 def root():
 
@@ -45,7 +44,6 @@ def root():
         photos = cursor.fetchall()
 
     return render_template('main.j2', listings=listings, listings_features=listings_features, features=features, bids=bids, photos=photos)
-
 
 @app.route('/submit-listing', methods=['GET', 'POST'])
 def submit_listing():
@@ -164,6 +162,9 @@ def profile():
 
     return render_template('profile.j2', user=usr)
 
+# bring in user authentication
+import auth
+app.register_blueprint(auth.bp)
 
 # Listener
 if __name__ == "__main__":
