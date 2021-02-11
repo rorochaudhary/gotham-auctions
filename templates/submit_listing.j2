@@ -3,10 +3,10 @@
 <div class="container">
     <div class="row mt-4">
         <div class="col">
-            <h2 class="text-center">Post a Listing</h2>
+            <h2 class="text-center">Submit a Listing</h2>
         </div>
     </div>
-    <form action="">
+    <form action="/submit-listing" method="POST" enctype="multipart/form-data">
         <div class="row mt-4">
             <div class="col-4">
                 <label for="fname" class="form-label">First Name</label>
@@ -26,7 +26,7 @@
         <div class="row mt-5">
             <div class="col-4">
                 <label for="year" class="form-label">Select your vehicle's year</label>
-                <select class="form-select" aria-label="year">
+                <select class="form-select" aria-label="year" id="year" name="year">
                     <option selected>Select year</option>
                     <option value="2010">2010</option>
                     <option value="2011">2011</option>
@@ -40,12 +40,12 @@
         <div class="row mt-2">
             <div class="col-4">
                 <label for="make" class="form-label">Select your vehicle's make</label>
-                <select class="form-select" aria-label="make">
+                <select class="form-select" aria-label="make" id="make" name="make">
                     <option selected>Select make</option>
-                    <option value="cheverolet">Cheverolet</option>
-                    <option value="mercedes">Mercedes</option>
-                    <option value="ford">Ford</option>
-                    <option value="volvo">Volvo</option>
+                    <option value="Cheverolet">Cheverolet</option>
+                    <option value="Mercedes">Mercedes</option>
+                    <option value="Ford">Ford</option>
+                    <option value="Volvo">Volvo</option>
                 </select>
             </div>
             <div class="col-4">
@@ -62,18 +62,12 @@
         <div class="row mt-5">
             <div class="col-4">
                 <label for="feature" class="form-label">Select your vehicle's features</label>
+                {% for feature in features %}
                 <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="manual" id="manual" name="manual">
-                    <label class="form-check-label" for="manual">Manual</label>
+                    <input class="form-check-input" type="checkbox" value="{{feature['carFeature']}}" id="features" name="features">
+                    <label class="form-check-label" for="manual">{{feature['carFeature']}}</label>
                 </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="electric" id="electric" name="electric">
-                    <label class="form-check-label" for="electric">Electric</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox" value="heatedseats" id="heatedseats" name="heatedseats">
-                    <label class="form-check-label" for="heatedseats">Heated Seats</label>
-                </div>
+                {% endfor %}
             </div>
         </div>
         <div class="row mt-2">
@@ -97,7 +91,7 @@
         <div class="row mt-2">
             <div class="col-4">
                 <label for="photo" class="form-label">Include a photo of your vehicle</label>
-                <input class="form-control" type="file" id="photo" name="photo">
+                <input class="form-control" type="file" id="photo" name="photo" accept="image/*">
             </div>
         </div>
         <div class="row my-5">

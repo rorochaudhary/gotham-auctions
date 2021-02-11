@@ -1,7 +1,4 @@
 {% extends "base.html" %}
-{% block stylesheet %}
-<!-- <link rel="stylesheet/css" href="./static/css/signup.css"> -->
-{% endblock %}
 {% block content %}
     <div class='container pt-5'>
         <div class="row mt-4">
@@ -9,7 +6,7 @@
                 <h2 class='text-center'>Enter your details below to create an account!</h2>
             </div>
         </div>
-        <form action="#"> <!-- add method="POST" -->
+        <form action="/signup" method="POST">
             <div class='row mt-4'>
                 <div class="col-4">
                     <label for='fname' class="form-label">First Name</label>
