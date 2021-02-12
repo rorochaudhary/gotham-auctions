@@ -30,12 +30,21 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/submit-listing">Submit a Listing</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/signup">Sign Up</a>
-                    </li>
+                {% if g.user %}
                     <li class="nav-item">
                         <a class="nav-link" href="/profile" tabindex="-1">Profile</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.logout') }}" tabindex="-1">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.register')}}">Sign Up</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.login')}}">Log In</a>
+                    </li>
+                {% endif %}
                 </ul>
             </div>
         </div>
