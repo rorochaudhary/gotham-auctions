@@ -3,7 +3,6 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for
 )
 from werkzeug.security import check_password_hash, generate_password_hash
-# need db access to authenticate
 import database.db_connector as db
 from datetime import date       
 

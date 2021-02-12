@@ -3,6 +3,7 @@ import os
 import database.db_connector as db
 from datetime import date
 from werkzeug.utils import secure_filename
+import auth
 
 UPLOAD_FOLDER = 'static/img/'
 
@@ -11,6 +12,7 @@ app = Flask(__name__)
 db_conn = db.connect_to_database()
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config.from_mapping(SECRET_KEY='dev')   # TODO: change to random bytes when deploying!
+app.register_blueprint(auth.bp)
 
 # Routes
 @app.route('/', methods=['GET', 'POST'])
@@ -46,6 +48,7 @@ def root():
     return render_template('main.j2', listings=listings, listings_features=listings_features, features=features, bids=bids, photos=photos)
 
 @app.route('/submit-listing', methods=['GET', 'POST'])
+@auth.login_required
 def submit_listing():
 
     # display standard features
@@ -161,10 +164,6 @@ def profile():
         # get user bids
 
     return render_template('profile.j2', user=usr)
-
-# bring in user authentication
-import auth
-app.register_blueprint(auth.bp)
 
 # Listener
 if __name__ == "__main__":
