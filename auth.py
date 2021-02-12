@@ -14,6 +14,7 @@ def register():
     if request.method == 'POST':
         username = request.form['user']
         password = request.form['pass']
+        confirm_pass = request.form['pass-confirm']
         db_conn = db.connect_to_database()
         error = None
 
@@ -23,9 +24,12 @@ def register():
         elif not password:
             error = 'Password is required.'
             print(error)
+        elif password != confirm_pass:
+            error = 'Passwords do not match.'
+            print(error)
         elif db.execute_query(
             db_conn, 
-            'SELECT userID FROM Users WHERE username = %s', (username,)
+            'SELECT userID FROM users WHERE username = %s', (username,)
         ).fetchone() is not None:
             error = 'User {} is already registered.'.format(username)
             print(error)
@@ -37,13 +41,11 @@ def register():
             dateJoined = date.today().strftime("%Y-%m-%d")
             db.execute_query(
                 db_conn, 
-                'INSERT INTO Users (userName, password, firstName, lastName, email, dateJoined) VALUES (%s, %s, %s, %s, %s, %s)',
+                'INSERT INTO users (userName, password, firstName, lastName, email, dateJoined) VALUES (%s, %s, %s, %s, %s, %s)',
                 (username, password, fname, lname, email, dateJoined)
                 # not storing hashed password for simplicity 
                 # if hash preferred, use generate_password_hash(password)
             )
-            
-            # db.commit()
             return redirect(url_for('auth.login'))
 
         flash(error)
@@ -55,13 +57,12 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        # print(f"got username: {username} and password: {password}")
         db_conn = db.connect_to_database()
         error = None
 
         user = db.execute_query(
             db_conn,
-            'SELECT * FROM Users WHERE userName = %s', 
+            'SELECT * FROM users WHERE userName = %s', 
             (username,)
             ).fetchone()
 
@@ -71,6 +72,7 @@ def login():
             error = 'Incorrect password.'
         # elif not check_password_hash(user['password'], password):
         #     error = 'Incorrect password.'
+        # only use if password is hashed in register()
 
         if error is None:
             session.clear()
@@ -90,7 +92,7 @@ def load_logged_in_user():
     else:
         db_conn = db.connect_to_database()
         g.user = db.execute_query(db_conn, 
-            'SELECT * FROM Users WHERE userID = %s', (user_id,)
+            'SELECT * FROM users WHERE userID = %s', (user_id,)
         ).fetchone()
 
 @bp.route('/logout')

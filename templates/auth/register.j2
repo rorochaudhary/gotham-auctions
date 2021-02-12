@@ -37,13 +37,14 @@
             </div>
             <div class='row mt-4'>
                 <div class="col-4">
-                    <label for='confirm-pass' class="form-label">Confirm password:</label>
+                    <label for='pass-confirm' class="form-label">Confirm password:</label>
                     <input type='password' class="form-control" id='pass-confirm' name='pass-confirm'>
                 </div> 
             </div>
             <div class='row my-4'>
                 <div class="col-4">
                     <input type='submit' value='Create Account' class="btn btn-danger">
+                    <a class="btn btn-secondary" href="{{ url_for('auth.login') }}" role="button">Already a User?</a>
                 </div>
             </div>
         </form>

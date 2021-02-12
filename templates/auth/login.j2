@@ -2,11 +2,30 @@
 {% block title %}<title>Log In - Gotham Auctions</title>{% endblock %}
 
 {% block content %}
-  <form method="post">
-    <label for="username">Username</label>
-    <input name="username" id="username" required>
-    <label for="password">Password</label>
-    <input type="password" name="password" id="password" required>
-    <input type="submit" value="Log In">
-  </form>
+  <div class='container pt-5'>
+        <div class="row mt-4">
+            <div class="col">
+                <h2 class='text-center'>Welcome Back to Gotham Auctions!</h2>
+            </div>
+        </div>
+        <form method="POST">
+            <div class='row mt-4'>
+                <div class="col-4">
+                    <label for='username' class="form-label">Username</label>
+                    <input type='text' class="form-control" id='username' name='username' required>
+                </div>
+            </div>
+            <div class='row mt-4'>
+                <div class="col-4">
+                    <label for='password' class="form-label">Password</label><br>
+                    <input type='password' class="form-control" id='password' name='password' required>
+                </div>
+            </div>
+            <div class='row my-4'>
+                <div class="col-4">
+                    <input type='submit' value='Log In' class="btn btn-danger">
+                </div>
+            </div>
+        </form>
+    </div>
 {% endblock %}

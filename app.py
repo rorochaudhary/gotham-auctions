@@ -10,7 +10,7 @@ UPLOAD_FOLDER = 'static/img/'
 app = Flask(__name__)
 db_conn = db.connect_to_database()
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config.from_mapping(SECRET_KEY='dev')
+app.config.from_mapping(SECRET_KEY='dev')   # TODO: change to random bytes when deploying!
 
 # Routes
 @app.route('/', methods=['GET', 'POST'])
