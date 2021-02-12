@@ -1,10 +1,10 @@
 CREATE TABLE users (
-    userID INT(11) NOT NULL AUTO_INCREMENT,
-    userName VARCHAR(255) NOT NULL,
+    userID INT(11) UNIQUE NOT NULL AUTO_INCREMENT,
+    userName VARCHAR(255) UNIQUE NOT NULL ,
     password VARCHAR(255) NOT NULL,
     firstName VARCHAR(255) NOT NULL,
     lastName VARCHAR(255) NOT NULL,
-    email VARCHAR(255) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
     dateJoined DATE NOT NULL,
     PRIMARY KEY (userID)
 );
@@ -15,7 +15,7 @@ INSERT INTO users (userName, password, firstName, lastName, email, dateJoined) V
     ('jimdoe', 'password3', 'Jim', 'Doe', 'jimdoe@gmail.com', '2018-04-04');
 
 CREATE TABLE listings (
-    listingID INT(11) NOT NULL AUTO_INCREMENT,
+    listingID INT(11) UNIQUE NOT NULL AUTO_INCREMENT,
     userID INT(11),
     bidID INT(11),
     make VARCHAR(255) NOT NULL,
@@ -29,14 +29,14 @@ CREATE TABLE listings (
     FOREIGN KEY (userID) REFERENCES users(userID)
 );
 
-INSERT INTO listings (userID, make, model, year, mileage, reserve, listDate, expirationDate) VALUES 
-    (1, 'Ford', 'Mustang', 1972, 130000, 100000, '2020-04-04', '2020-06-06'),
-    (2, 'Volvo', 'V70R', 2002, 150000, 110000, '2020-03-04', '2020-05-06'),
-    (3, 'Mercedes', '300SL Gullwing', 1963, 10000, 130000, '2020-02-04', '2020-04-06'),
-    (3, 'Ferrari', 'F40 GTR', 1999, 45783, 1500000, '2020-01-04', '2020-02-03');
+INSERT INTO listings (userID, bidID, make, model, year, mileage, reserve, listDate, expirationDate) VALUES 
+    (1, NULL, 'Ford', 'Mustang', 1972, 130000, 100000, '2020-04-04', '2020-06-06'),
+    (2, NULL, 'Volvo', 'V70R', 2002, 150000, 110000, '2020-03-04', '2020-05-06'),
+    (3, NULL, 'Mercedes', '300SL Gullwing', 1963, 10000, 130000, '2020-02-04', '2020-04-06'),
+    (3, NULL, 'Ferrari', 'F40 GTR', 1999, 45783, 1500000, '2020-01-04', '2020-02-03');
 
 CREATE TABLE bids (
-    bidID INT(11) NOT NULL AUTO_INCREMENT,
+    bidID INT(11) UNIQUE NOT NULL AUTO_INCREMENT,
     userID INT(11) NOT NULL,
     listingID INT(11) NOT NULL,
     bidAmt INT(11) NOT NULL,
@@ -60,7 +60,7 @@ UPDATE listings SET bidID = 2 WHERE listingID = 2;
 UPDATE listings SET bidID = 3 WHERE listingID = 3;
 
 CREATE TABLE features (
-    featureID INT(11) NOT NULL AUTO_INCREMENT,
+    featureID INT(11) UNIQUE NOT NULL AUTO_INCREMENT,
     carFeature VARCHAR(255) UNIQUE NOT NULL,
     PRIMARY KEY (featureID)
 );
@@ -68,7 +68,7 @@ CREATE TABLE features (
 INSERT INTO features (carFeature) VALUES ('Manual'), ('Electric'), ('Convertible'), ('4WD');
 
 CREATE TABLE photos (
-    photoID INT(11) NOT NULL AUTO_INCREMENT,
+    photoID INT(11) UNIQUE NOT NULL AUTO_INCREMENT,
     listingID INT(11) NOT NULL,
     photoPath VARCHAR(255) NOT NULL,
     PRIMARY KEY (photoID),
