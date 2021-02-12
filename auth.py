@@ -37,14 +37,14 @@ def register():
             dateJoined = date.today().strftime("%Y-%m-%d")
             db.execute_query(
                 db_conn, 
-                'INSERT INTO Users (userName, password, firstName, lastName, email, dateJoined) VALUES (%s, %s)',
+                'INSERT INTO Users (userName, password, firstName, lastName, email, dateJoined) VALUES (%s, %s, %s, %s, %s, %s)',
                 (username, password, fname, lname, email, dateJoined)
                 # not storing hashed password for simplicity 
-                # if prefer hash, use generate_password_hash(password)
+                # if hash preferred, use generate_password_hash(password)
             )
             
             # db.commit()
-            return redirect(url_for('auth/login.j2'))
+            return redirect(url_for('auth.login'))
 
         flash(error)
     
@@ -96,13 +96,13 @@ def load_logged_in_user():
 @bp.route('/logout')
 def logout():
     session.clear()
-    return redirect(url_for('root'))
+    return redirect(url_for('auth/login'))
 
 def login_required(view):
     @functools.wraps(view)
     def wrapped_view(**kwargs):
         if g.user is None:
-            return redirect(url_for('auth/login.j2'))
+            return redirect(url_for('auth/login'))
 
         return view(**kwargs)
 
