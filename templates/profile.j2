@@ -1,9 +1,10 @@
 {% extends "base.html" %}
+{% block title %}<title>Profile - Gotham Auctions</title>{% endblock %}
 {% block content %}
 <div class="container">
     <div class="row mt-4">
         <div class="col">
-            <h1>My Account</h2>
+            <h1>{{g.user.firstName}}'s Info</h2>
         </div>
     </div>
     <div class="row">
@@ -16,35 +17,35 @@
     <div class="row mt-3">
         <div class="col-4">
             <label for="fname" class="form-label">First Name</label>
-            <input type="text" class="form-control" id="fname" name="fname" value="{{user['firstName']}}" disabled>
+            <input type="text" class="form-control" id="fname" name="fname" value="{{g.user.firstName}}" disabled>
         </div>
         <div class="col-4">
             <label for="lname" class="form-label">Last Name</label>
-            <input type="text" class="form-control" id="lname" name="lname" value="{{user['lastName']}}" disabled>
+            <input type="text" class="form-control" id="lname" name="lname" value="{{g.user.lastName}}" disabled>
         </div>
     </div>
     <div class="row mt-4">
         <div class="col-4">
             <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" name="email" value="{{user['email']}}" disabled>
+            <input type="email" class="form-control" id="email" name="email" value="{{g.user.email}}" disabled>
         </div>
     </div>
     <div class="row mt-4">
         <div class="col-4">
             <label for="username" class="form-label">User Name</label>
-            <input type="text" class="form-control" id="username" name="username" value="{{user['userName']}}" disabled>
+            <input type="text" class="form-control" id="username" name="username" value="{{g.user.userName}}" disabled>
         </div>
     </div>
     <div class="row mt-4">
         <div class="col-4">
             <label for="password" class="form-label">Password</label>
-            <input type="password" class="form-control" id="password" name="password" value="{{user['password']}}" disabled>
+            <input type="password" class="form-control" id="password" name="password" value="{{g.user.password}}" disabled>
         </div>
     </div>
     <div class="row mt-4">
         <div class="col-4">
             <label for="datejoined" class="form-label">Date Joined</label>
-            <input type="date" class="form-control" id="datejoined" name="datejoined" value="{{user['dateJoined']}}" disabled>
+            <input type="date" class="form-control" id="datejoined" name="datejoined" value="{{g.user.dateJoined}}" disabled>
         </div>
     </div>
     <div class="row mt-5">

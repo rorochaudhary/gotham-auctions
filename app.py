@@ -3,6 +3,7 @@ import os
 import database.db_connector as db
 from datetime import date
 from werkzeug.utils import secure_filename
+import auth
 
 UPLOAD_FOLDER = 'static/img/'
 
@@ -10,10 +11,10 @@ UPLOAD_FOLDER = 'static/img/'
 app = Flask(__name__)
 db_conn = db.connect_to_database()
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config.from_mapping(SECRET_KEY='dev')   # TODO: change to random bytes when deploying!
+app.register_blueprint(auth.bp)
 
 # Routes
-
-
 @app.route('/', methods=['GET', 'POST'])
 def root():
 
@@ -46,8 +47,8 @@ def root():
 
     return render_template('main.j2', listings=listings, listings_features=listings_features, features=features, bids=bids, photos=photos)
 
-
 @app.route('/submit-listing', methods=['GET', 'POST'])
+@auth.login_required
 def submit_listing():
 
     # display standard features
@@ -126,28 +127,6 @@ def submit_listing():
 
     return render_template('submit_listing.j2', features=features)
 
-
-@ app.route('/signup', methods=['GET', 'POST'])
-def signup():
-
-    if request.method == 'POST':
-
-        # get form data
-        data = request.form
-        fname = data['fname']
-        lname = data['lname']
-        usr = data['user']
-        pwd = data['pass']
-        email = data['email']
-        date_joined = date.today()
-
-        query = "INSERT INTO users (userName, password, firstName, lastName, email, dateJoined) VALUES (%s, %s, %s, %s, %s, %s);"
-        db.execute_query(
-            db_connection=db_conn, query=query, query_params=(usr, pwd, fname, lname, email, date_joined))
-
-    return render_template('signup.j2')
-
-
 @ app.route('/profile', methods=['GET', 'POST'])
 def profile():
 
@@ -163,7 +142,6 @@ def profile():
         # get user bids
 
     return render_template('profile.j2', user=usr)
-
 
 # Listener
 if __name__ == "__main__":

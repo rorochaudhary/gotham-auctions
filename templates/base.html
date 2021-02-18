@@ -30,16 +30,28 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/submit-listing">Submit a Listing</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/signup">Sign Up</a>
-                    </li>
+                {% if g.user %}
                     <li class="nav-item">
                         <a class="nav-link" href="/profile" tabindex="-1">Profile</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.logout') }}" tabindex="-1">Logout</a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.register')}}">Sign Up</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('auth.login')}}">Log In</a>
+                    </li>
+                {% endif %}
                 </ul>
             </div>
         </div>
-    </nav>
+        </nav>
+    {% for message in get_flashed_messages() %}
+    <div class="flash">{{ message }}</div>
+    {% endfor %}
     <div id='content'>
         {% block content %}
         {% endblock %}
@@ -48,5 +60,5 @@
       <!-- Option 1: Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
       {% endblock %}
-  </body>
+    </body>
 </html>
