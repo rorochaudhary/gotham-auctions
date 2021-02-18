@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, g
 import os
 import database.db_connector as db
 from datetime import date
@@ -11,10 +11,13 @@ UPLOAD_FOLDER = 'static/img/'
 app = Flask(__name__)
 db_conn = db.connect_to_database()
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-app.config.from_mapping(SECRET_KEY='dev')   # TODO: change to random bytes when deploying!
+# TODO: change to random bytes when deploying!
+app.config.from_mapping(SECRET_KEY='dev')
 app.register_blueprint(auth.bp)
 
 # Routes
+
+
 @app.route('/', methods=['GET', 'POST'])
 def root():
 
@@ -22,30 +25,50 @@ def root():
 
         # get listings
         query = "SELECT listingID, bidID, make, model, year, reserve, expirationDate FROM listings;"
-        cursor = db.execute_query(db_connection=db_conn, query=query)
-        listings = cursor.fetchall()
+        listings = db.execute_query(
+            db_connection=db_conn, query=query).fetchall()
 
         # get features
         query = "SELECT featureID, carFeature FROM features;"
-        cursor = db.execute_query(db_connection=db_conn, query=query)
-        features = cursor.fetchall()
+        features = db.execute_query(
+            db_connection=db_conn, query=query).fetchall()
 
         # get listings_features
         query = "SELECT listingID, featureID FROM FeaturesListings;"
-        cursor = db.execute_query(db_connection=db_conn, query=query)
-        listings_features = cursor.fetchall()
+        listings_features = db.execute_query(
+            db_connection=db_conn, query=query).fetchall()
 
         # get bids
         query = "SELECT bidID, bidAmt FROM bids;"
-        cursor = db.execute_query(db_connection=db_conn, query=query)
-        bids = cursor.fetchall()
+        bids = db.execute_query(db_connection=db_conn, query=query).fetchall()
 
         # get photos
         query = "SELECT listingID, photoPath FROM photos;"
-        cursor = db.execute_query(db_connection=db_conn, query=query)
-        photos = cursor.fetchall()
+        photos = db.execute_query(
+            db_connection=db_conn, query=query).fetchall()
 
     return render_template('main.j2', listings=listings, listings_features=listings_features, features=features, bids=bids, photos=photos)
+
+
+@app.route('/place-bid/<int:list_id>', methods=['GET', 'POST'])
+def place_bid(list_id):
+
+    if request.method == 'POST':
+
+        bid_amt = request.form['bid']
+        bid_date = date.today()
+
+        query = "INSERT INTO bids (userID, listingID, bidAmt, bidDate) VALUES (%s, %s, %s, %s)"
+        cursor = db.execute_query(db_connection=db_conn, query=query,
+                                  query_params=(g.user['userID'], list_id, bid_amt, bid_date))
+        bid_id = cursor.lastrowid
+
+        query = "UPDATE listings SET bidID = %s WHERE listingID = %s;"
+        db.execute_query(db_connection=db_conn, query=query,
+                         query_params=(bid_id, list_id))
+
+    return redirect('/')
+
 
 @app.route('/submit-listing', methods=['GET', 'POST'])
 @auth.login_required
@@ -60,12 +83,6 @@ def submit_listing():
 
         # get form data
         data = request.form
-
-        # get userID from users table using email
-        query = "SELECT userID FROM users WHERE email = %s;"
-        cursor = db.execute_query(
-            db_connection=db_conn, query=query, query_params=(data['email'],))
-        usr = cursor.fetchall()[0]['userID']
 
         # get car and auction information
         make = data['make']
@@ -85,7 +102,7 @@ def submit_listing():
         # insert listing info
         query = "INSERT INTO listings (userID, make, model, year, mileage, reserve, listDate, expirationDate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);"
         cursor = db.execute_query(
-            db_connection=db_conn, query=query, query_params=(usr, make, model, year, mileage, reserve, list_date, expiration))
+            db_connection=db_conn, query=query, query_params=(g.user['userID'], make, model, year, mileage, reserve, list_date, expiration))
         list_id = cursor.lastrowid
 
         # insert photo path for listing
@@ -127,21 +144,12 @@ def submit_listing():
 
     return render_template('submit_listing.j2', features=features)
 
+
 @ app.route('/profile', methods=['GET', 'POST'])
 def profile():
 
-    if request.method == 'GET':
+    return render_template('profile.j2')
 
-        # get user info
-        query = "SELECT firstName, lastName, email, userName, password, dateJoined FROM users WHERE userID = 1;"
-        cursor = db.execute_query(db_connection=db_conn, query=query)
-        usr = cursor.fetchall()[0]
-
-        # get user listings
-
-        # get user bids
-
-    return render_template('profile.j2', user=usr)
 
 # Listener
 if __name__ == "__main__":
