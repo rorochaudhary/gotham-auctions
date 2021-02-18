@@ -1,6 +1,5 @@
 {% extends "base.html" %}
 {% block title %}<title>Submit a Listing - Gotham Auctions</title>{% endblock %}
-
 {% block content %}
 <div class="container">
     <div class="row mt-4">
@@ -10,22 +9,6 @@
     </div>
     <form action="/submit-listing" method="POST" enctype="multipart/form-data">
         <div class="row mt-4">
-            <div class="col-4">
-                <label for="fname" class="form-label">First Name</label>
-                <input type="text" class="form-control" id="fname" name="fname">
-            </div>
-            <div class="col-4">
-                <label for="lname" class="form-label">Last Name</label>
-                <input type="text" class="form-control" id="lname" name="lname">
-            </div>
-        </div>
-        <div class="row mt-2">
-            <div class="col-4">
-                <label for="email" class="form-label">Email</label>
-                <input type="email" class="form-control" id="email" name="email">
-            </div>
-        </div>
-        <div class="row mt-5">
             <div class="col-4">
                 <label for="year" class="form-label">Select your vehicle's year</label>
                 <select class="form-select" aria-label="year" id="year" name="year">
@@ -50,6 +33,8 @@
                     <option value="Volvo">Volvo</option>
                 </select>
             </div>
+        </div>
+        <div class="row mt-2">
             <div class="col-4">
                 <label for="model" class="form-label">Enter your vehicle's model</label>
                 <input type="text" class="form-control" id="model" name="model">
