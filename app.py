@@ -127,28 +127,6 @@ def submit_listing():
 
     return render_template('submit_listing.j2', features=features)
 
-
-@ app.route('/signup', methods=['GET', 'POST'])
-def signup():
-
-    if request.method == 'POST':
-
-        # get form data
-        data = request.form
-        fname = data['fname']
-        lname = data['lname']
-        usr = data['user']
-        pwd = data['pass']
-        email = data['email']
-        date_joined = date.today()
-
-        query = "INSERT INTO users (userName, password, firstName, lastName, email, dateJoined) VALUES (%s, %s, %s, %s, %s, %s);"
-        db.execute_query(
-            db_connection=db_conn, query=query, query_params=(usr, pwd, fname, lname, email, date_joined))
-
-    return render_template('signup.j2')
-
-
 @ app.route('/profile', methods=['GET', 'POST'])
 def profile():
 
