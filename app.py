@@ -16,27 +16,42 @@ app.register_blueprint(auth.bp)
 
 @app.route('/', methods=['GET', 'POST'])
 def root():
-    if request.method == 'GET':
-        db_conn = db.connect_to_database()
+    db_conn = db.connect_to_database()
 
-        query = "SELECT listingID, bidID, make, model, year, reserve, expirationDate FROM listings;"
+    query = "SELECT featureID, carFeature FROM features;"
+    features = db.execute_query(
+        db_connection=db_conn, query=query).fetchall()
+
+    query = "SELECT listingID, featureID FROM FeaturesListings;"
+    listings_features = db.execute_query(
+        db_connection=db_conn, query=query).fetchall()
+
+    query = "SELECT bidID, bidAmt FROM bids;"
+    bids = db.execute_query(db_connection=db_conn, query=query).fetchall()
+
+    query = "SELECT listingID, photoPath FROM photos;"
+    photos = db.execute_query(
+        db_connection=db_conn, query=query).fetchall()
+
+    if request.method == 'GET':
+        query = "SELECT * FROM listings;"
         listings = db.execute_query(
             db_connection=db_conn, query=query).fetchall()
 
-        query = "SELECT featureID, carFeature FROM features;"
-        features = db.execute_query(
-            db_connection=db_conn, query=query).fetchall()
+    elif request.method == 'POST':
+        search_query = f"%{request.form['searchquery']}%"
 
-        query = "SELECT listingID, featureID FROM FeaturesListings;"
-        listings_features = db.execute_query(
-            db_connection=db_conn, query=query).fetchall()
-
-        query = "SELECT bidID, bidAmt FROM bids;"
-        bids = db.execute_query(db_connection=db_conn, query=query).fetchall()
-
-        query = "SELECT listingID, photoPath FROM photos;"
-        photos = db.execute_query(
-            db_connection=db_conn, query=query).fetchall()
+        if request.form['search-filter'] == 'cars':
+            query = "SELECT * FROM listings WHERE make LIKE %s OR model LIKE %s OR year LIKE %s"
+            listings = db.execute_query(db_connection=db_conn, query=query,
+                                        query_params=(search_query, search_query, search_query)).fetchall()
+        elif request.form['search-filter'] == 'features':
+            query = "SELECT featureID FROM features WHERE carFeature LIKE %s"
+            feature_id = db.execute_query(db_connection=db_conn, query=query,
+                                          query_params=(search_query,)).fetchone()
+            query = "SELECT * FROM listings WHERE listingID IN (SELECT listingID FROM FeaturesListings WHERE featureID = %s);"
+            listings = db.execute_query(db_connection=db_conn, query=query,
+                                        query_params=(feature_id['featureID'],)).fetchall()
 
     return render_template('main.j2', listings=listings, listings_features=listings_features, features=features, bids=bids, photos=photos)
 
