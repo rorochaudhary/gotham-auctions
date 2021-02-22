@@ -138,8 +138,25 @@ def submit_listing():
 
 @ app.route('/profile', methods=['GET', 'POST'])
 def profile():
+    db_conn = db.connect_to_database()
 
-    return render_template('profile.j2')
+    if request.method == "GET":
+        # gather user's active listings
+        user_id = (g.user['userID'], )
+        query = \
+            "SELECT listings.year, listings.make, listings.model, bids.bidAmt, listings.reserve, listings.expirationDate FROM listings \
+            LEFT JOIN bids ON listings.bidID = bids.bidID \
+            WHERE listings.userID = %s;"
+        active_listings = db.execute_query(db_conn, query, user_id)
+
+        # gather user's bid history
+        query = \
+            "SELECT bids.bidDate, listings.year, listings.make, listings.model, bids.bidAmt FROM bids \
+            INNER JOIN listings ON bids.listingID = listings.listingID \
+            WHERE bids.userID = %s;"
+        bid_history = db.execute_query(db_conn, query, user_id)
+
+        return render_template('profile.j2', active_listings=active_listings, bid_history=bid_history)
 
 
 # Listener

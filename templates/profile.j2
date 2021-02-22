@@ -57,32 +57,26 @@
         <div class="col-10">
             <table class="table table-striped table-hover">
                 <thead>
-                  <tr>
-                    <th scope="col">#</th>
-                    <th scope="col">Vehicle</th>
-                    <th scope="col">Current Bid</th>
-                    <th scope="col">Reserve</th>
-                    <th scope="col">Expires</th>
-                    <th scope="col">Actions</th>
-                  </tr>
+                    <tr>
+                        <th scope="col">#</th>
+                        <th scope="col">Vehicle</th>
+                        <th scope="col">Current Bid</th>
+                        <th scope="col">Reserve</th>
+                        <th scope="col">Expires</th>
+                        <th scope="col">Actions</th>
+                    </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <th scope="row">1</th>
-                    <td>1971 Ford Mustang</td>
-                    <td>$60000</td>
-                    <td>$40000</td>
-                    <td>01-March-2021</td>
-                    <td><button class="btn btn-primary" type="submit">Cancel</button></td>
-                  </tr>
-                  <tr>
-                    <th scope="row">2</th>
-                    <td>1984 Porsche 944</td>
-                    <td>$60000</td>
-                    <td>None</td>
-                    <td>04-April-2021</td>
-                    <td><button class="btn btn-primary" type="submit">Cancel</button></td>
-                  </tr>
+                    {% for listing in active_listings %}
+                    <tr>
+                        <th scope='row'>{{ loop.index }}</th>
+                        <td>{{ listing.year }} {{ listing.make }} {{ listing.model }}</td>
+                        <td>{{ listing.bidAmt }}</td>
+                        <td>{{ listing.reserve }}</td>
+                        <td>{{ listing.expirationDate }}</td>
+                        <td><button class="btn btn-primary" type="submit">Cancel</button></td>
+                    </tr>
+                    {% endfor %}
                 </tbody>
               </table>
         </div>
@@ -103,16 +97,13 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <th scope="row">01-January-2021</th>
-                    <td>1972 Nissan Skyline</td>
-                    <td>$26000</td>
-                  </tr>
-                  <tr>
-                    <th scope="row">17-January-2021</th>
-                    <td>1972 Nissan Skyline</td>
-                    <td>$31000</td>
-                  </tr>
+                    {% for bid in bid_history %}
+                    <tr>
+                        <th scope='row'>{{ bid.bidDate }}</th>
+                        <td>{{ bid.year }} {{ bid.make }} {{ bid.model }}</td>
+                        <td>{{ bid.bidAmt }}</td>
+                    </tr>
+                    {% endfor %}
                 </tbody>
               </table> 
         </div>
