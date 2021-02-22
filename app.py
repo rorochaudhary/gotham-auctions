@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, g
+from flask import Flask, render_template, request, redirect, g, url_for
 import os
 import database.db_connector as db
 from datetime import date
@@ -140,11 +140,12 @@ def submit_listing():
 def profile():
     db_conn = db.connect_to_database()
 
+    # requesting user profile stats
     if request.method == "GET":
         # gather user's active listings
         user_id = (g.user['userID'], )
         query = \
-            "SELECT listings.year, listings.make, listings.model, bids.bidAmt, listings.reserve, listings.expirationDate FROM listings \
+            "SELECT listings.listingID, listings.year, listings.make, listings.model, bids.bidAmt, listings.reserve, listings.expirationDate FROM listings \
             LEFT JOIN bids ON listings.bidID = bids.bidID \
             WHERE listings.userID = %s;"
         active_listings = db.execute_query(db_conn, query, user_id)
@@ -157,6 +158,18 @@ def profile():
         bid_history = db.execute_query(db_conn, query, user_id)
 
         return render_template('profile.j2', active_listings=active_listings, bid_history=bid_history)
+
+    # user requesting listing deletion
+    elif request.method == "POST":
+        # gather relevant data to delete listing
+        listing_to_delete = request.form['listingID']
+        delete_query = 'DELETE FROM FeaturesListings WHERE listingID = %s;'
+        update_query = 'UPDATE listings SET listings.userID = NULL WHERE listingID = %s;'
+        
+        db.execute_query(db_conn, delete_query, (listing_to_delete,))
+        db.execute_query(db_conn, update_query, (listing_to_delete,))
+
+        return redirect(url_for('profile'))
 
 
 # Listener
