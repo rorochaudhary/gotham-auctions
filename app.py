@@ -34,7 +34,7 @@ def root():
         db_connection=db_conn, query=query).fetchall()
 
     if request.method == 'GET':
-        query = "SELECT * FROM listings;"
+        query = "SELECT * FROM listings WHERE userID IS NOT NULL;"
         listings = db.execute_query(
             db_connection=db_conn, query=query).fetchall()
 
