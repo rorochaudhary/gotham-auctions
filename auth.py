@@ -29,7 +29,7 @@ def register():
             print(error)
         elif db.execute_query(
             db_conn,
-            'SELECT userID FROM users WHERE username = %s', (username,)
+            'SELECT userID FROM Users WHERE username = %s', (username,)
         ).fetchone() is not None:
             error = 'User {} is already registered.'.format(username)
             print(error)
@@ -41,7 +41,7 @@ def register():
             date_joined = date.today().strftime("%Y-%m-%d")
             db.execute_query(
                 db_conn,
-                'INSERT INTO users (userName, password, firstName, lastName, email, dateJoined) VALUES (%s, %s, %s, %s, %s, %s)',
+                'INSERT INTO Users (userName, password, firstName, lastName, email, dateJoined) VALUES (%s, %s, %s, %s, %s, %s)',
                 (username, password, fname, lname, email, date_joined)
                 # not storing hashed password for simplicity
                 # if hash preferred, use generate_password_hash(password)
@@ -63,7 +63,7 @@ def login():
 
         user = db.execute_query(
             db_conn,
-            'SELECT * FROM users WHERE userName = %s',
+            'SELECT * FROM Users WHERE userName = %s',
             (username,)
         ).fetchone()
 
@@ -94,7 +94,7 @@ def load_logged_in_user():
     else:
         db_conn = db.connect_to_database()
         g.user = db.execute_query(db_conn,
-                                  'SELECT * FROM users WHERE userID = %s', (user_id,)
+                                  'SELECT * FROM Users WHERE userID = %s', (user_id,)
                                   ).fetchone()
 
 
