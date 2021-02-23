@@ -34,7 +34,7 @@ def root():
         db_connection=db_conn, query=query).fetchall()
 
     if request.method == 'GET':
-        query = "SELECT * FROM listings WHERE userID IS NOT NULL AND expirationDate >= NOW();"
+        query = "SELECT * FROM Listings WHERE userID IS NOT NULL AND expirationDate >= NOW();"
         listings = db.execute_query(
             db_connection=db_conn, query=query).fetchall()
 
@@ -145,15 +145,15 @@ def profile():
         # gather user's active listings
         user_id = (g.user['userID'], )
         query = \
-            "SELECT l.listingID, l.year, l.make, l.model, b.bidAmt, l.reserve, l.expirationDate FROM listings l\
-            LEFT JOIN bids b ON l.bidID = b.bidID \
+            "SELECT l.listingID, l.year, l.make, l.model, b.bidAmt, l.reserve, l.expirationDate FROM Listings l\
+            LEFT JOIN Bids b ON l.bidID = b.bidID \
             WHERE l.userID = %s;"
         active_listings = db.execute_query(db_conn, query, user_id)
 
         # gather user's bid history
         query = \
-            "SELECT b.bidDate, l.year, l.make, l.model, b.bidAmt FROM bids b \
-            INNER JOIN listings l ON b.listingID = l.listingID \
+            "SELECT b.bidDate, l.year, l.make, l.model, b.bidAmt FROM Bids b \
+            INNER JOIN Listings l ON b.listingID = l.listingID \
             WHERE b.userID = %s;"
         bid_history = db.execute_query(db_conn, query, user_id)
 
@@ -164,8 +164,8 @@ def profile():
         # gather relevant data to delete listing
         listing_to_delete = request.form['listingID']
         delete_query = 'DELETE FROM FeaturesListings WHERE listingID = %s;'
-        update_query = 'UPDATE listings SET listings.userID = NULL WHERE listingID = %s;'
-        
+        update_query = 'UPDATE Listings SET Listings.userID = NULL WHERE listingID = %s;'
+
         db.execute_query(db_conn, delete_query, (listing_to_delete,))
         db.execute_query(db_conn, update_query, (listing_to_delete,))
 
