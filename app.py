@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, g
+from flask import Flask, render_template, request, redirect, g, url_for
 import os
 import database.db_connector as db
 from datetime import date
@@ -34,7 +34,7 @@ def root():
         db_connection=db_conn, query=query).fetchall()
 
     if request.method == 'GET':
-        query = "SELECT * FROM Listings;"
+        query = "SELECT * FROM listings WHERE userID IS NOT NULL AND expirationDate >= NOW();"
         listings = db.execute_query(
             db_connection=db_conn, query=query).fetchall()
 
@@ -138,8 +138,38 @@ def submit_listing():
 
 @ app.route('/profile', methods=['GET', 'POST'])
 def profile():
+    db_conn = db.connect_to_database()
 
-    return render_template('profile.j2')
+    # requesting user profile stats
+    if request.method == "GET":
+        # gather user's active listings
+        user_id = (g.user['userID'], )
+        query = \
+            "SELECT l.listingID, l.year, l.make, l.model, b.bidAmt, l.reserve, l.expirationDate FROM listings l\
+            LEFT JOIN bids b ON l.bidID = b.bidID \
+            WHERE l.userID = %s;"
+        active_listings = db.execute_query(db_conn, query, user_id)
+
+        # gather user's bid history
+        query = \
+            "SELECT b.bidDate, l.year, l.make, l.model, b.bidAmt FROM bids b \
+            INNER JOIN listings l ON b.listingID = l.listingID \
+            WHERE b.userID = %s;"
+        bid_history = db.execute_query(db_conn, query, user_id)
+
+        return render_template('profile.j2', active_listings=active_listings, bid_history=bid_history)
+
+    # user requesting listing deletion
+    elif request.method == "POST":
+        # gather relevant data to delete listing
+        listing_to_delete = request.form['listingID']
+        delete_query = 'DELETE FROM FeaturesListings WHERE listingID = %s;'
+        update_query = 'UPDATE listings SET listings.userID = NULL WHERE listingID = %s;'
+        
+        db.execute_query(db_conn, delete_query, (listing_to_delete,))
+        db.execute_query(db_conn, update_query, (listing_to_delete,))
+
+        return redirect(url_for('profile'))
 
 
 # Listener
