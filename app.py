@@ -18,7 +18,7 @@ app.register_blueprint(auth.bp)
 def root():
     db_conn = db.connect_to_database()
 
-    query = "SELECT featureID, carFeature FROM features;"
+    query = "SELECT featureID, carFeature FROM Features;"
     features = db.execute_query(
         db_connection=db_conn, query=query).fetchall()
 
@@ -26,10 +26,10 @@ def root():
     listings_features = db.execute_query(
         db_connection=db_conn, query=query).fetchall()
 
-    query = "SELECT bidID, bidAmt FROM bids;"
+    query = "SELECT bidID, bidAmt FROM Bids;"
     bids = db.execute_query(db_connection=db_conn, query=query).fetchall()
 
-    query = "SELECT listingID, photoPath FROM photos;"
+    query = "SELECT listingID, photoPath FROM Photos;"
     photos = db.execute_query(
         db_connection=db_conn, query=query).fetchall()
 
@@ -42,14 +42,14 @@ def root():
         search_query = f"%{request.form['searchquery']}%"
 
         if request.form['search-filter'] == 'cars':
-            query = "SELECT * FROM listings WHERE make LIKE %s OR model LIKE %s OR year LIKE %s"
+            query = "SELECT * FROM Listings WHERE make LIKE %s OR model LIKE %s OR year LIKE %s"
             listings = db.execute_query(db_connection=db_conn, query=query,
                                         query_params=(search_query, search_query, search_query)).fetchall()
         elif request.form['search-filter'] == 'features':
-            query = "SELECT featureID FROM features WHERE carFeature LIKE %s"
+            query = "SELECT featureID FROM Features WHERE carFeature LIKE %s"
             feature_id = db.execute_query(db_connection=db_conn, query=query,
                                           query_params=(search_query,)).fetchone()
-            query = "SELECT * FROM listings WHERE listingID IN (SELECT listingID FROM FeaturesListings WHERE featureID = %s);"
+            query = "SELECT * FROM Listings WHERE listingID IN (SELECT listingID FROM FeaturesListings WHERE featureID = %s);"
             listings = db.execute_query(db_connection=db_conn, query=query,
                                         query_params=(feature_id['featureID'],)).fetchall()
 
@@ -64,12 +64,12 @@ def place_bid(list_id):
 
         db_conn = db.connect_to_database()
 
-        query = "INSERT INTO bids (userID, listingID, bidAmt, bidDate) VALUES (%s, %s, %s, %s)"
+        query = "INSERT INTO Bids (userID, listingID, bidAmt, bidDate) VALUES (%s, %s, %s, %s)"
         cursor = db.execute_query(db_connection=db_conn, query=query,
                                   query_params=(g.user['userID'], list_id, bid_amt, bid_date))
         bid_id = cursor.lastrowid
 
-        query = "UPDATE listings SET bidID = %s WHERE listingID = %s;"
+        query = "UPDATE Listings SET bidID = %s WHERE listingID = %s;"
         db.execute_query(db_connection=db_conn, query=query,
                          query_params=(bid_id, list_id))
 
@@ -81,7 +81,7 @@ def place_bid(list_id):
 def submit_listing():
     # display standard features on form
     db_conn = db.connect_to_database()
-    query = "SELECT carFeature FROM features WHERE featureID BETWEEN 1 AND 4;"
+    query = "SELECT carFeature FROM Features WHERE featureID BETWEEN 1 AND 4;"
     features = db.execute_query(db_connection=db_conn, query=query).fetchall()
 
     if request.method == 'POST':
@@ -100,12 +100,12 @@ def submit_listing():
         filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
         photo.save(filepath)
 
-        query = "INSERT INTO listings (userID, make, model, year, mileage, reserve, listDate, expirationDate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);"
+        query = "INSERT INTO Listings (userID, make, model, year, mileage, reserve, listDate, expirationDate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);"
         cursor = db.execute_query(
             db_connection=db_conn, query=query, query_params=(g.user['userID'], make, model, year, mileage, reserve, list_date, expiration))
         list_id = cursor.lastrowid
 
-        query = "INSERT INTO photos (photoPath, listingID) VALUES (%s, %s);"
+        query = "INSERT INTO Photos (photoPath, listingID) VALUES (%s, %s);"
         db.execute_query(db_connection=db_conn, query=query,
                          query_params=(filepath, list_id))
 
@@ -114,14 +114,14 @@ def submit_listing():
 
         # if included, add inputted feature to table
         if len(usr_feature) != 0:
-            query = "INSERT INTO features (carFeature) VALUES (%s);"
+            query = "INSERT INTO Features (carFeature) VALUES (%s);"
             db.execute_query(
                 db_connection=db_conn, query=query, query_params=(usr_feature,))
             sel_features.append(usr_feature)
 
         # get all feature ids for this listing
         format_str = ','.join(['%s'] * len(sel_features))
-        query = "SELECT featureID FROM features WHERE carFeature IN (" + \
+        query = "SELECT featureID FROM Features WHERE carFeature IN (" + \
             format_str + ");"
         feature_ids = db.execute_query(
             db_connection=db_conn, query=query, query_params=tuple(sel_features)).fetchall()
