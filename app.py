@@ -34,7 +34,7 @@ def root():
         db_connection=db_conn, query=query).fetchall()
 
     if request.method == 'GET':
-        query = "SELECT * FROM listings WHERE userID IS NOT NULL;"
+        query = "SELECT * FROM listings WHERE userID IS NOT NULL AND expirationDate >= NOW();"
         listings = db.execute_query(
             db_connection=db_conn, query=query).fetchall()
 
@@ -145,16 +145,16 @@ def profile():
         # gather user's active listings
         user_id = (g.user['userID'], )
         query = \
-            "SELECT listings.listingID, listings.year, listings.make, listings.model, bids.bidAmt, listings.reserve, listings.expirationDate FROM listings \
-            LEFT JOIN bids ON listings.bidID = bids.bidID \
-            WHERE listings.userID = %s;"
+            "SELECT l.listingID, l.year, l.make, l.model, b.bidAmt, l.reserve, l.expirationDate FROM listings l\
+            LEFT JOIN bids b ON l.bidID = b.bidID \
+            WHERE l.userID = %s;"
         active_listings = db.execute_query(db_conn, query, user_id)
 
         # gather user's bid history
         query = \
-            "SELECT bids.bidDate, listings.year, listings.make, listings.model, bids.bidAmt FROM bids \
-            INNER JOIN listings ON bids.listingID = listings.listingID \
-            WHERE bids.userID = %s;"
+            "SELECT b.bidDate, l.year, l.make, l.model, b.bidAmt FROM bids b \
+            INNER JOIN listings l ON b.listingID = l.listingID \
+            WHERE b.userID = %s;"
         bid_history = db.execute_query(db_conn, query, user_id)
 
         return render_template('profile.j2', active_listings=active_listings, bid_history=bid_history)

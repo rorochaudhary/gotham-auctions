@@ -78,14 +78,8 @@
                         {# hidden form for listing deletion #}
                         <td>
                             <form action="/profile" method="POST">
-                            <input type='hidden' id='listingID' name='listingID' value='{{listing.listingID}}'>
-                            <input type='hidden' id='year' name='year' value='{{listing.year}}'>
-                            <input type='hidden' id='make' name='make' value='{{listing.make}}'>
-                            <input type='hidden' id='model' name='model' value='{{listing.model}}'>
-                            <input type='hidden' id='bidAmt' name='bidAmt' value='{{listing.bidAmt}}'>
-                            <input type='hidden' id='reserve' name='reserve' value='{{listing.reserve}}'>
-                            <input type='hidden' id='expirationDate' name='expirationDate' value='{{listing.expirationDate}}'>
-                            <button class="btn btn-primary" type="submit">Cancel</button>
+                                <input type='hidden' id='listingID' name='listingID' value='{{ listing.listingID }}'>
+                                <button class="btn btn-primary" type="submit">Cancel</button>
                             </form>
                         </td>
                     </tr>
