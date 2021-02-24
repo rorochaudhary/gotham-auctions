@@ -40,18 +40,9 @@ def root():
 
     elif request.method == 'POST':
         search_query = f"%{request.form['searchquery']}%"
-
-        if request.form['search-filter'] == 'cars':
-            query = "SELECT * FROM Listings WHERE make LIKE %s OR model LIKE %s OR year LIKE %s"
-            listings = db.execute_query(db_connection=db_conn, query=query,
-                                        query_params=(search_query, search_query, search_query)).fetchall()
-        elif request.form['search-filter'] == 'features':
-            query = "SELECT featureID FROM Features WHERE carFeature LIKE %s"
-            feature_id = db.execute_query(db_connection=db_conn, query=query,
-                                          query_params=(search_query,)).fetchone()
-            query = "SELECT * FROM Listings WHERE listingID IN (SELECT listingID FROM FeaturesListings WHERE featureID = %s);"
-            listings = db.execute_query(db_connection=db_conn, query=query,
-                                        query_params=(feature_id['featureID'],)).fetchall()
+        query = "SELECT * FROM Listings WHERE listingID IN (SELECT listingID FROM (SELECT L.listingID, CONCAT_WS(' ', L.make, L.model, L.year, F.carFeature) AS car_info FROM Listings L INNER JOIN FeaturesListings FL ON L.listingID = FL.listingID INNER JOIN Features F ON FL.featureID = F.featureID) AS tmp WHERE tmp.car_info LIKE %s) AND userID IS NOT NULL AND expirationDate >= NOW();"
+        listings = db.execute_query(db_connection=db_conn, query=query,
+                                    query_params=(search_query,)).fetchall()
 
     return render_template('main.j2', listings=listings, listings_features=listings_features, features=features, bids=bids, photos=photos)
 
