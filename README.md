@@ -59,17 +59,17 @@ Head over to http://127.0.0.1:9112/ to see the site. In the terminal, Flask will
 Thanks for interacting!
 
 ### Built With
-[Flask](https://palletsprojects.com/p/flask/) - Python-based web framework (mainly back-end)
-[MySQL](https://dev.mysql.com/downloads/mysql/) - database on which this app is built
-[Jinja2](https://jinja.palletsprojects.com/en/2.11.x/) - webpage templating within Flask
-[Bootstrap](https://getbootstrap.com/) - front-end 
+- [Flask](https://palletsprojects.com/p/flask/) Python-based web framework (mainly back-end)
+- [MySQL](https://dev.mysql.com/downloads/mysql/) database on which this app is built
+- [Jinja2](https://jinja.palletsprojects.com/en/2.11.x/) webpage templating within Flask
+- [Bootstrap](https://getbootstrap.com/) front-end styling
 
 ### Authors
 A tag-team effort from [Rohit Chaudhary](https://github.com/rorochaudhary) and [Paldin Bet Eivaz](https://github.com/beteivap)
 
 ### Acknowledgements
 Sources used throughout this app:
-- [George Kochera](https://github.com/gkochera/CS340-demo-flask-app) - CS 340 TA
+- [George Kochera](https://github.com/gkochera/CS340-demo-flask-app) Databases Course (CS 340) TA
 - [Flask](https://flask.palletsprojects.com/en/1.1.x/tutorial/) tutorial
 - [Boostrap](https://getbootstrap.com/docs/5.0/getting-started/introduction/) documentation
 - [StackOverflow](https://stackoverflow.com/)
