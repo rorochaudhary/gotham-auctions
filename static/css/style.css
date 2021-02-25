@@ -6,6 +6,6 @@ div {
   font-family: "Raleway", sans-serif;
 }
 
-#listings {
+div.card {
   background-color: white;
 }
