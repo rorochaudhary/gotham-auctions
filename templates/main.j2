@@ -29,7 +29,8 @@
                 {% endif %}
             {% endfor %}
                 <div class="card-body">
-                    <h5 class="card-title">{{item['year']}} {{item['make']}} {{item['model']}}</h5>
+                    <h4 class="card-title">{{item['year']}} {{item['make']}} {{item['model']}}</h4>
+                    <h6 class="card-subtitle mb-2 text-muted">{{item['mileage']}} mi | Reserve: ${{item['reserve']}}</h6>
                     <p class="card-text">Features:</p>
                     <ul>
                     {% for listings_features in listings_features %}
@@ -42,7 +43,7 @@
                         {% endif %}
                     {% endfor %}
                     </ul>
-                    <div class="card-footer">
+                    <div class="card-footer bg-transparent">
                         {% if item['bidID'] %}
                             {% for bid in bids %}
                                 {% if bid['bidID'] == item['bidID'] %}
@@ -52,7 +53,7 @@
                         {% else %}
                             <span>Current Bid: None</span>
                         {% endif %}
-                        <span>| Ends: {{item['expirationDate']}} | Reserve: ${{item['reserve']}} | Mileage: {{item['mileage']}} mi</span>
+                        <span>| Ends: {{item['expirationDate']}}</span>
                     </div> 
                     <form class="row mt-3 justify-content-end" action="/place-bid/{{item['listingID']}}" method="POST">
                         <div class="col-auto input-group w-75">
