@@ -42,9 +42,9 @@ def register():
             db.execute_query(
                 db_conn,
                 'INSERT INTO Users (userName, password, firstName, lastName, email, dateJoined) VALUES (%s, %s, %s, %s, %s, %s)',
-                (username, password, fname, lname, email, date_joined)
-                # not storing hashed password for simplicity
-                # if hash preferred, use generate_password_hash(password)
+                (username, generate_password_hash(password), fname, lname, email, date_joined)
+                # storing hashed password for simplicity
+                # if no-hash preferred, directly insert password into query
             )
             return redirect(url_for('auth.login'))
 
@@ -69,11 +69,11 @@ def login():
 
         if user is None:
             error = 'Incorrect username.'
-        elif user['password'] != password:
-            error = 'Incorrect password.'
-        # elif not check_password_hash(user['password'], password):
+        # elif user['password'] != password:
         #     error = 'Incorrect password.'
-        # only use if password is hashed in register()
+        elif not check_password_hash(user['password'], password):
+            error = 'Incorrect password.'
+        # if not hashing password, use commented out elif block
 
         if error is None:
             session.clear()

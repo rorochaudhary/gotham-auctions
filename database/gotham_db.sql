@@ -12,9 +12,9 @@ CREATE TABLE Users (
 );
 
 INSERT INTO Users (userName, password, firstName, lastName, email, dateJoined) VALUES 
-    ('johndoe', 'password1', 'John', 'Doe', 'johndoe@gmail.com', '2020-04-04'),
-    ('janedoe', 'password2', 'Jane', 'Doe', 'janedoe@gmail.com', '2019-04-04'),
-    ('jimdoe', 'password3', 'Jim', 'Doe', 'jimdoe@gmail.com', '2018-04-04');
+    ('johndoe', 'pbkdf2:sha256:150000$iD5kR8qS$01a43a001a115b0747ed312a66686405225c1658ab8bf57f5a46e94d0393039e', 'John', 'Doe', 'johndoe@gmail.com', '2020-04-04'),
+    ('janedoe', 'pbkdf2:sha256:150000$jrbRgQyP$ff64293bbc3e65a67a48a9cb878d38327c5a17f6994b4e55205b5fbd67819257', 'Jane', 'Doe', 'janedoe@gmail.com', '2019-04-04'),
+    ('jimdoe', 'pbkdf2:sha256:150000$OlA1Whpp$53a114e19713849f5db98730c6fe70d0bf0b5afa2669a08ed5170f9b9ea95ca7', 'Jim', 'Doe', 'jimdoe@gmail.com', '2018-04-04');
 
 DROP TABLE IF EXISTS Listings;
 
