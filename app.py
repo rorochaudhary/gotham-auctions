@@ -124,6 +124,8 @@ def submit_listing():
         db.execute_many(
             db_connection=db_conn, query=query, query_params=listing_features)
 
+        return redirect(url_for('root'))
+
     return render_template('submit_listing.j2', features=features)
 
 
