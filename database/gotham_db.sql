@@ -34,10 +34,10 @@ CREATE TABLE Listings (
 );
 
 INSERT INTO Listings (userID, bidID, make, model, year, mileage, reserve, listDate, expirationDate) VALUES 
-    (1, NULL, 'Ford', 'Mustang', 1972, 130000, 100000, '2020-04-04', '2022-06-06'),
-    (2, NULL, 'Volvo', 'V70R', 2002, 150000, 110000, '2020-03-04', '2022-05-06'),
-    (3, NULL, 'Mercedes', '300SL Gullwing', 1963, 10000, 130000, '2020-02-04', '2022-04-06'),
-    (3, NULL, 'Ferrari', 'F40 GTR', 1999, 45783, 1500000, '2020-01-04', '2022-02-03');
+    (1, NULL, 'Ford', 'Mustang', 1965, 130000, 100000, '2020-04-04', '2022-06-06'),
+    (2, NULL, 'Porsche', 'Carrera', 1987, 150000, 110000, '2020-03-04', '2022-05-06'),
+    (3, NULL, 'Jeep', 'Wrangler', 2002, 10000, 130000, '2020-02-04', '2022-04-06'),
+    (3, NULL, 'Chevrolet', 'Corvette Stingray', 1969, 45783, 1500000, '2020-01-04', '2022-02-03');
 
 DROP TABLE IF EXISTS Bids;
 
@@ -86,10 +86,10 @@ CREATE TABLE Photos (
 );
 
 INSERT INTO Photos (listingID, photoPath) VALUES
-    (1, 'static/img/test_car_img.jpg'),
-    (2, 'static/img/test_car_img.jpg'),
-    (3, 'static/img/test_car_img.jpg'),
-    (4, 'static/img/test_car_img.jpg');
+    (1, 'static/img/65-mustang.jpg'),
+    (2, 'static/img/87-carrera.jpg'),
+    (3, 'static/img/02-wrangler.jpg'),
+    (4, 'static/img/69-stingray.jpg');
 
 DROP TABLE IF EXISTS FeaturesListings;
 
