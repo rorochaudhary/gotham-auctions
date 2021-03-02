@@ -40,7 +40,7 @@ def root():
 
     elif request.method == 'POST':
         search_query = f"%{request.form['searchquery']}%"
-        query = "SELECT * FROM Listings WHERE listingID IN (SELECT listingID FROM (SELECT L.listingID, CONCAT_WS(' ', L.year, L.make, L.model, F.carFeature) AS carInfo FROM Listings L INNER JOIN FeaturesListings FL ON L.listingID = FL.listingID INNER JOIN Features F ON FL.featureID = F.featureID) AS tmp WHERE tmp.car_info LIKE %s) AND userID IS NOT NULL AND expirationDate >= NOW();"
+        query = "SELECT * FROM Listings WHERE listingID IN (SELECT listingID FROM (SELECT L.listingID, CONCAT_WS(' ', L.year, L.make, L.model, F.carFeature) AS carInfo FROM Listings L INNER JOIN FeaturesListings FL ON L.listingID = FL.listingID INNER JOIN Features F ON FL.featureID = F.featureID) AS tmp WHERE tmp.carInfo LIKE %s) AND userID IS NOT NULL AND expirationDate >= NOW();"
         listings = db.execute_query(db_connection=db_conn, query=query,
                                     query_params=(search_query,)).fetchall()
 
