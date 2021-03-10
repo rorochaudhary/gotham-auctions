@@ -89,14 +89,13 @@ def submit_listing():
         model = data['model']
         year = int(data['year'])
         mileage = int(data['mileage'])
-        # print(f"reserve for listing is: {data['reserve']}")
         reserve = int(data['reserve']) if data['reserve'] != '' else 0
         list_date = date.today()
         expiration = data['expiration']
 
-        # save photo to static/img/ if added by user
+        # user photo stored at static/img/ otherwise default photo used
         photo = request.files['photo']
-        filepath = None
+        filepath = "./static/img/No_image_available.jpg"
         if validate_photo(photo): 
             filename = secure_filename(photo.filename)
             filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -107,10 +106,9 @@ def submit_listing():
             db_connection=db_conn, query=query, query_params=(g.user['userID'], make, model, year, mileage, reserve, list_date, expiration))
         list_id = cursor.lastrowid
 
-        if filepath is not None:
-            query = "INSERT INTO Photos (photoPath, listingID) VALUES (%s, %s);"
-            db.execute_query(db_connection=db_conn, query=query,
-                            query_params=(filepath, list_id))
+        query = "INSERT INTO Photos (photoPath, listingID) VALUES (%s, %s);"
+        db.execute_query(db_connection=db_conn, query=query,
+                        query_params=(filepath, list_id))
 
         # if included, add inputted feature to table
         sel_features = request.form.getlist('features')  # selected features
