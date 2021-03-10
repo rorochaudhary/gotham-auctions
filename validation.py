@@ -33,10 +33,9 @@ def validate_new_listing(form_data):
         return error
 
 
-def validate_submit_photo(files_request):
+def validate_photo(file_request):
     """
     function determines whether request contains a file or not
-    return -- True if file present, False otherwise
+    return -- True if image present, False otherwise
     """
-    # NOTE: add file extensions requirement??
-    pass
+    return (True if file_request.filename != '' else False)

@@ -4,7 +4,7 @@ import database.db_connector as db
 from datetime import date
 from werkzeug.utils import secure_filename
 import auth
-from validation import validate_new_listing
+from validation import validate_new_listing, validate_photo
 
 UPLOAD_FOLDER = 'static/img/'
 
@@ -90,48 +90,50 @@ def submit_listing():
         year = int(data['year'])
         mileage = int(data['mileage'])
         # print(f"reserve for listing is: {data['reserve']}")
-        reserve = int(data['reserve']) if data['reserve'] != '' else 'NULL'
+        reserve = int(data['reserve']) if data['reserve'] != '' else 0
         list_date = date.today()
         expiration = data['expiration']
 
-        # save photo to static/img/
+        # save photo to static/img/ if added by user
         photo = request.files['photo']
-        filename = secure_filename(photo.filename)
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        photo.save(filepath)
+        filepath = None
+        if validate_photo(photo): 
+            filename = secure_filename(photo.filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            photo.save(filepath)
 
         query = "INSERT INTO Listings (userID, make, model, year, mileage, reserve, listDate, expirationDate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);"
         cursor = db.execute_query(
             db_connection=db_conn, query=query, query_params=(g.user['userID'], make, model, year, mileage, reserve, list_date, expiration))
         list_id = cursor.lastrowid
 
-        query = "INSERT INTO Photos (photoPath, listingID) VALUES (%s, %s);"
-        db.execute_query(db_connection=db_conn, query=query,
-                         query_params=(filepath, list_id))
-
-        sel_features = request.form.getlist('features')  # selected features
-        usr_feature = request.form['usrfeature']  # feature inputted by user
+        if filepath is not None:
+            query = "INSERT INTO Photos (photoPath, listingID) VALUES (%s, %s);"
+            db.execute_query(db_connection=db_conn, query=query,
+                            query_params=(filepath, list_id))
 
         # if included, add inputted feature to table
+        sel_features = request.form.getlist('features')  # selected features
+        usr_feature = request.form['usrfeature']  # feature inputted by user
         if len(usr_feature) != 0:
             query = "INSERT INTO Features (carFeature) VALUES (%s);"
             db.execute_query(
                 db_connection=db_conn, query=query, query_params=(usr_feature,))
             sel_features.append(usr_feature)
 
-        # get all feature ids for this listing
-        format_str = ','.join(['%s'] * len(sel_features))
-        query = "SELECT featureID FROM Features WHERE carFeature IN (" + \
-            format_str + ");"
-        feature_ids = db.execute_query(
-            db_connection=db_conn, query=query, query_params=tuple(sel_features)).fetchall()
+        # add all features associated with listing into DB
+        if len(sel_features) > 0:
+            format_str = ','.join(['%s'] * len(sel_features))
+            query = "SELECT featureID FROM Features WHERE carFeature IN (" + \
+                format_str + ");"
+            feature_ids = db.execute_query(db_connection=db_conn, query=query, query_params=tuple(sel_features)).fetchall()
 
-        # insert all feature ids for this listing
-        listing_features = [(list_id, feature_id['featureID'])
-                            for feature_id in feature_ids]
-        query = "INSERT INTO FeaturesListings (listingID, featureID) VALUES (%s, %s);"
-        db.execute_many(
-            db_connection=db_conn, query=query, query_params=listing_features)
+            # insert all feature ids for this listing
+            listing_features = [(list_id, feature_id['featureID'])
+                                for feature_id in feature_ids]
+            query = "INSERT INTO FeaturesListings (listingID, featureID) VALUES (%s, %s);"
+            db.execute_many(
+                db_connection=db_conn, query=query, query_params=listing_features)
 
         return redirect(url_for('root'))
 
