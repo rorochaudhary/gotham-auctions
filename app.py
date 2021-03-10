@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, redirect, g, url_for
+from flask import Flask, render_template, request, redirect, g, url_for, flash
 import os
 import database.db_connector as db
 from datetime import date
 from werkzeug.utils import secure_filename
 import auth
+from validation import validate_new_listing
 
 UPLOAD_FOLDER = 'static/img/'
 
@@ -77,11 +78,19 @@ def submit_listing():
 
     if request.method == 'POST':
         data = request.form
+        error = validate_new_listing(data)
+
+        if error:
+            flash(error)
+            return render_template('submit_listing.j2', features=features)
+
+        # validated, parse form and add listing
         make = data['make']
         model = data['model']
         year = int(data['year'])
         mileage = int(data['mileage'])
-        reserve = int(data['reserve'])
+        # print(f"reserve for listing is: {data['reserve']}")
+        reserve = int(data['reserve']) if data['reserve'] != '' else 'NULL'
         list_date = date.today()
         expiration = data['expiration']
 
