@@ -46,7 +46,15 @@ def register():
                 # storing hashed password for simplicity
                 # if no-hash preferred, directly insert password into query
             )
-            return redirect(url_for('auth.login'))
+
+            # redirect to home with user logged in
+            user = db.execute_query(db_conn,
+            'SELECT * FROM Users WHERE userName = %s',
+            (username,)).fetchone()
+            session.clear()
+            session['user_id'] = user['userID']
+            
+            return redirect(url_for('root'))
 
         flash(error)
 
