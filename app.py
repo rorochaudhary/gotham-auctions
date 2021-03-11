@@ -62,7 +62,7 @@ def place_bid(list_id):
 
         valid_bid, message = validate_bid(bid_amt, high_bid)
         if not valid_bid:
-            flash(message)
+            flash(message, 'danger')
             return redirect(url_for('root'))
         else:
             query = "INSERT INTO Bids (userID, listingID, bidAmt, bidDate) VALUES (%s, %s, %s, %s)"
@@ -75,7 +75,7 @@ def place_bid(list_id):
             db.execute_query(db_connection=db_conn, query=query,
                             query_params=(bid_id, list_id))
 
-            flash(message)
+            flash(message, 'success')
             return redirect(url_for('root'))
 
 
@@ -92,7 +92,7 @@ def submit_listing():
         error = validate_new_listing(data)
 
         if error:
-            flash(error)
+            flash(error, 'danger')
             return render_template('submit_listing.j2', features=features)
 
         # validated, parse form and add listing

@@ -48,7 +48,7 @@ def register():
             )
             return redirect(url_for('auth.login'))
 
-        flash(error)
+        flash(error, 'success')
 
     return render_template('auth/register.j2')
 
@@ -80,7 +80,7 @@ def login():
             session['user_id'] = user['userID']
             return redirect(url_for('root'))
 
-        flash(error)
+        flash(error, 'danger')
 
     return render_template('auth/login.j2')
 
