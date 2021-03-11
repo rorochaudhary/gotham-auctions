@@ -30,7 +30,11 @@
             {% endfor %}
                 <div class="card-body">
                     <h4 class="card-title">{{item['year']}} {{item['make']}} {{item['model']}}</h4>
+                    {% if item['reserve'] %}
                     <h6 class="card-subtitle mb-2 text-muted">{{item['mileage']}} mi | Reserve: ${{item['reserve']}}</h6>
+                    {% else %}
+                    <h6 class="card-subtitle mb-2 text-muted">{{item['mileage']}} mi | Reserve: None</h6>
+                    {% endif %}
                     <p class="card-text">Features:</p>
                     <ul>
                     {% for listings_features in listings_features %}
