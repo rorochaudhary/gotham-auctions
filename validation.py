@@ -1,11 +1,10 @@
-# validation functions for submit listing, place bid
-# NOTE: possible validation for adding feature that already exists in here too?
+# validation functions for submit listing, photo with listing, and place bid
 def validate_new_listing(form_data):
     """
     validates form data from submit_listing for required fields:
         year, make, model, mileage, expiration
-    param form_data -- information stored in request.from
-    return -- error (str of error msg or None)
+    param form_data -- information stored in request.form (dict)
+    return error -- str or None
     """
     error = None
 
@@ -36,6 +35,20 @@ def validate_new_listing(form_data):
 def validate_photo(file_request):
     """
     function determines whether request contains a file or not
-    return -- True if image present, False otherwise
+    param file_request -- contains request information of user photo (dict)
+    return -- True if image present, False otherwise (bool)
     """
     return True if file_request.filename != '' else False
+
+def validate_bid(user_bid, high_bid):
+    """
+    determines whether bid amount from user higher than current high bid.
+    param user_bid -- user submitted bid information from db (int)
+    param high_bid -- current high bid associated with listing (dict)
+    return (validity, message) -- tuple of (False, str)
+    """
+    message = f"Congratulations! Your bid of ${user_bid} placed successfully."
+    if user_bid <= high_bid["amount"]:
+        message = "Your bid is not high enough! Try again."
+        return False, message
+    return True, message

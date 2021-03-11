@@ -4,7 +4,7 @@ import database.db_connector as db
 from datetime import date
 from werkzeug.utils import secure_filename
 import auth
-from validation import validate_new_listing, validate_photo
+from validation import validate_new_listing, validate_photo, validate_bid
 
 UPLOAD_FOLDER = 'static/img/'
 
@@ -51,21 +51,32 @@ def root():
 @app.route('/place-bid/<int:list_id>', methods=['GET', 'POST'])
 def place_bid(list_id):
     if request.method == 'POST':
-        bid_amt = request.form['bid']
+        bid_amt = int(request.form['bid'])
         bid_date = date.today()
-
         db_conn = db.connect_to_database()
 
-        query = "INSERT INTO Bids (userID, listingID, bidAmt, bidDate) VALUES (%s, %s, %s, %s)"
-        cursor = db.execute_query(db_connection=db_conn, query=query,
-                                  query_params=(g.user['userID'], list_id, bid_amt, bid_date))
-        bid_id = cursor.lastrowid
+        # check if higher than current bid on listing
+        query = "SELECT l.listingID, l.bidID, b.bidAmt as amount FROM listings l INNER JOIN bids b ON l.bidID = b.bidID WHERE l.listingID = %s;"
+        high_bid = db.execute_query(db_connection=db_conn, query=query,
+                                    query_params=(list_id,)).fetchone()
 
-        query = "UPDATE Listings SET bidID = %s WHERE listingID = %s;"
-        db.execute_query(db_connection=db_conn, query=query,
-                         query_params=(bid_id, list_id))
+        valid_bid, message = validate_bid(bid_amt, high_bid)
+        if not valid_bid:
+            flash(message)
+            return redirect(url_for('root'))
+        else:
+            query = "INSERT INTO Bids (userID, listingID, bidAmt, bidDate) VALUES (%s, %s, %s, %s)"
+            cursor = db.execute_query(db_connection=db_conn, query=query,
+                                      query_params=(g.user['userID'], list_id,
+                                                    bid_amt, bid_date))
+            bid_id = cursor.lastrowid
 
-    return redirect('/')
+            query = "UPDATE Listings SET bidID = %s WHERE listingID = %s;"
+            db.execute_query(db_connection=db_conn, query=query,
+                            query_params=(bid_id, list_id))
+
+            flash(message)
+            return redirect(url_for('root'))
 
 
 @app.route('/submit-listing', methods=['GET', 'POST'])
