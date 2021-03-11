@@ -7,12 +7,15 @@
             <h1>Submit a Listing</h1>
         </div>
     </div>
+    <div class="row mt-2">
+        <h4>Fields marked with a red asterisk (<span style='color:red;'>*</span>) are required.</h4>
+    </div>
     <form action="/submit-listing" method="POST" enctype="multipart/form-data">
         <div class="row mt-5">
             <div class="col-4">
-                <label for="year" class="form-label">Select your vehicle's year</label>
+                <label for="year" class="form-label">Select your vehicle's year:<strong style='color:red;font-size:'>*</strong></label>
                 <select class="form-select" aria-label="year" id="year" name="year">
-                    <option selected>Select year</option>
+                    <option>Select year</option>
                     <option value="2010">2010</option>
                     <option value="2011">2011</option>
                     <option value="2012">2012</option>
@@ -24,7 +27,7 @@
         </div>
         <div class="row mt-2">
             <div class="col-4">
-                <label for="make" class="form-label">Select your vehicle's make</label>
+                <label for="make" class="form-label">Select your vehicle's make:<strong style='color:red;font-size:'>*</strong></label>
                 <select class="form-select" aria-label="make" id="make" name="make">
                     <option selected>Select make</option>
                     <option value="Cheverolet">Cheverolet</option>
@@ -36,19 +39,19 @@
         </div>
         <div class="row mt-2">
             <div class="col-4">
-                <label for="model" class="form-label">Enter your vehicle's model</label>
+                <label for="model" class="form-label">Enter your vehicle's model:<strong style='color:red;font-size:'>*</strong></label>
                 <input type="text" class="form-control" id="model" name="model">
             </div>
         </div>
         <div class="row mt-2">
             <div class="col-4">
-                <label for="mileage" class="form-label">Enter your vehicle's mileage</label>
+                <label for="mileage" class="form-label">Enter your vehicle's mileage:<strong style='color:red;font-size:'>*</strong></label>
                 <input type="number" class="form-control" id="mileage" name="mileage">
             </div>
         </div>
         <div class="row mt-5">
             <div class="col-4">
-                <label for="feature" class="form-label">Select your vehicle's features</label>
+                <label for="feature" class="form-label">Select your vehicle's features (optional):</label>
                 {% for feature in features %}
                 <div class="form-check">
                     <input class="form-check-input" type="checkbox" value="{{feature['carFeature']}}" id="features" name="features">
@@ -59,25 +62,25 @@
         </div>
         <div class="row mt-2">
             <div class="col-4">
-                <label for="usrfeature" class="form-label">Or, enter a feature below</label>
+                <label for="usrfeature" class="form-label">Or, enter a feature below:</label>
                 <input type="text" class="form-control" id="usrfeature" name="usrfeature">
             </div>
         </div>
         <div class="row mt-5">
             <div class="col-4">
-                <label for="reserve" class="form-label">Enter a reserve amount (optional)</label>
+                <label for="reserve" class="form-label">Enter a reserve amount (optional):</label>
                 <input type="number" class="form-control" id="reserve" name="reserve">
             </div>
         </div>
         <div class="row mt-2">
             <div class="col-4">
-                <label for="expiration" class="form-label">Set an expiration date for your auction</label>
+                <label for="expiration" class="form-label">Set an expiration date for your auction:<strong style='color:red;font-size:'>*</strong></label>
                 <input type="date" class="form-control" id="expiration" name="expiration">
             </div>
         </div>
         <div class="row mt-2">
             <div class="col-4">
-                <label for="photo" class="form-label">Include a photo of your vehicle</label>
+                <label for="photo" class="form-label">Include a photo of your vehicle (optional):</label>
                 <input class="form-control" type="file" id="photo" name="photo" accept="image/*">
             </div>
         </div>

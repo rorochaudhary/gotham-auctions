@@ -1,9 +1,10 @@
-from flask import Flask, render_template, request, redirect, g, url_for
+from flask import Flask, render_template, request, redirect, g, url_for, flash
 import os
 import database.db_connector as db
 from datetime import date
 from werkzeug.utils import secure_filename
 import auth
+from validation import validate_new_listing, validate_photo, validate_bid
 
 UPLOAD_FOLDER = 'static/img/'
 
@@ -50,21 +51,32 @@ def root():
 @app.route('/place-bid/<int:list_id>', methods=['GET', 'POST'])
 def place_bid(list_id):
     if request.method == 'POST':
-        bid_amt = request.form['bid']
+        bid_amt = int(request.form['bid'])
         bid_date = date.today()
-
         db_conn = db.connect_to_database()
 
-        query = "INSERT INTO Bids (userID, listingID, bidAmt, bidDate) VALUES (%s, %s, %s, %s)"
-        cursor = db.execute_query(db_connection=db_conn, query=query,
-                                  query_params=(g.user['userID'], list_id, bid_amt, bid_date))
-        bid_id = cursor.lastrowid
+        # check if higher than current bid on listing
+        query = "SELECT l.listingID, l.bidID, b.bidAmt as amount FROM listings l INNER JOIN bids b ON l.bidID = b.bidID WHERE l.listingID = %s;"
+        high_bid = db.execute_query(db_connection=db_conn, query=query,
+                                    query_params=(list_id,)).fetchone()
 
-        query = "UPDATE Listings SET bidID = %s WHERE listingID = %s;"
-        db.execute_query(db_connection=db_conn, query=query,
-                         query_params=(bid_id, list_id))
+        valid_bid, message = validate_bid(bid_amt, high_bid)
+        if not valid_bid:
+            flash(message, 'danger')
+            return redirect(url_for('root'))
+        else:
+            query = "INSERT INTO Bids (userID, listingID, bidAmt, bidDate) VALUES (%s, %s, %s, %s)"
+            cursor = db.execute_query(db_connection=db_conn, query=query,
+                                      query_params=(g.user['userID'], list_id,
+                                                    bid_amt, bid_date))
+            bid_id = cursor.lastrowid
 
-    return redirect('/')
+            query = "UPDATE Listings SET bidID = %s WHERE listingID = %s;"
+            db.execute_query(db_connection=db_conn, query=query,
+                            query_params=(bid_id, list_id))
+
+            flash(message, 'success')
+            return redirect(url_for('root'))
 
 
 @app.route('/submit-listing', methods=['GET', 'POST'])
@@ -77,19 +89,28 @@ def submit_listing():
 
     if request.method == 'POST':
         data = request.form
+        error = validate_new_listing(data)
+
+        if error:
+            flash(error, 'danger')
+            return render_template('submit_listing.j2', features=features)
+
+        # validated, parse form and add listing
         make = data['make']
         model = data['model']
         year = int(data['year'])
         mileage = int(data['mileage'])
-        reserve = int(data['reserve'])
+        reserve = int(data['reserve']) if data['reserve'] != '' else 0
         list_date = date.today()
         expiration = data['expiration']
 
-        # save photo to static/img/
+        # user photo stored at static/img/ otherwise default photo used
         photo = request.files['photo']
-        filename = secure_filename(photo.filename)
-        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-        photo.save(filepath)
+        filepath = "./static/img/No_image_available.jpg"
+        if validate_photo(photo): 
+            filename = secure_filename(photo.filename)
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            photo.save(filepath)
 
         query = "INSERT INTO Listings (userID, make, model, year, mileage, reserve, listDate, expirationDate) VALUES (%s, %s, %s, %s, %s, %s, %s, %s);"
         cursor = db.execute_query(
@@ -100,29 +121,43 @@ def submit_listing():
         db.execute_query(db_connection=db_conn, query=query,
                          query_params=(filepath, list_id))
 
+        # handling of features input
         sel_features = request.form.getlist('features')  # selected features
         usr_feature = request.form['usrfeature']  # feature inputted by user
 
-        # if included, add inputted feature to table
+        # determine whether user creating already existing feature
         if len(usr_feature) != 0:
-            query = "INSERT INTO Features (carFeature) VALUES (%s);"
-            db.execute_query(
-                db_connection=db_conn, query=query, query_params=(usr_feature,))
-            sel_features.append(usr_feature)
+            query = "SELECT * FROM Features WHERE carFeature=%s"
+            feature_dups = db.execute_query(
+                db_connection=db_conn,
+                query=query,
+                query_params=(usr_feature,)).fetchall()
 
-        # get all feature ids for this listing
-        format_str = ','.join(['%s'] * len(sel_features))
-        query = "SELECT featureID FROM Features WHERE carFeature IN (" + \
-            format_str + ");"
-        feature_ids = db.execute_query(
-            db_connection=db_conn, query=query, query_params=tuple(sel_features)).fetchall()
+            # no duplicate, add new feature
+            if len(feature_dups) == 0:
+                query = "INSERT INTO Features (carFeature) VALUES (%s);"
+                db.execute_query(
+                    db_connection=db_conn,
+                    query=query,
+                    query_params=(usr_feature,))
+                sel_features.append(usr_feature)
+            # duplicate, associate existing feature with new listing
+            else:
+                sel_features.append(feature_dups[0]['carFeature']) 
 
-        # insert all feature ids for this listing
-        listing_features = [(list_id, feature_id['featureID'])
-                            for feature_id in feature_ids]
-        query = "INSERT INTO FeaturesListings (listingID, featureID) VALUES (%s, %s);"
-        db.execute_many(
-            db_connection=db_conn, query=query, query_params=listing_features)
+        # add all features associated with listing into featuresListings
+        if len(sel_features) > 0:
+            format_str = ','.join(['%s'] * len(sel_features))
+            query = "SELECT featureID FROM Features WHERE carFeature IN (" + \
+                format_str + ");"
+            feature_ids = db.execute_query(db_connection=db_conn, query=query, query_params=tuple(sel_features)).fetchall()
+
+            # insert all feature ids for this listing
+            listing_features = [(list_id, feature_id['featureID'])
+                                for feature_id in feature_ids]
+            query = "INSERT INTO FeaturesListings (listingID, featureID) VALUES (%s, %s);"
+            db.execute_many(
+                db_connection=db_conn, query=query, query_params=listing_features)
 
         return redirect(url_for('root'))
 
