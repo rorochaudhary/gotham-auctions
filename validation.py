@@ -48,7 +48,7 @@ def validate_bid(user_bid, high_bid):
     return (validity, message) -- tuple of (False, str)
     """
     message = f"Congratulations! Your bid of ${user_bid} placed successfully."
-    if user_bid <= high_bid["amount"]:
+    if high_bid is not None and user_bid <= high_bid["amount"]:
         message = "Your bid is not high enough! Try again."
         return False, message
     return True, message
