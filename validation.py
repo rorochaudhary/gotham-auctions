@@ -38,4 +38,4 @@ def validate_photo(file_request):
     function determines whether request contains a file or not
     return -- True if image present, False otherwise
     """
-    return (True if file_request.filename != '' else False)
+    return True if file_request.filename != '' else False

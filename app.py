@@ -108,18 +108,33 @@ def submit_listing():
 
         query = "INSERT INTO Photos (photoPath, listingID) VALUES (%s, %s);"
         db.execute_query(db_connection=db_conn, query=query,
-                        query_params=(filepath, list_id))
+                         query_params=(filepath, list_id))
 
-        # if included, add inputted feature to table
+        # handling of features input
         sel_features = request.form.getlist('features')  # selected features
         usr_feature = request.form['usrfeature']  # feature inputted by user
-        if len(usr_feature) != 0:
-            query = "INSERT INTO Features (carFeature) VALUES (%s);"
-            db.execute_query(
-                db_connection=db_conn, query=query, query_params=(usr_feature,))
-            sel_features.append(usr_feature)
 
-        # add all features associated with listing into DB
+        # determine whether user creating already existing feature
+        if len(usr_feature) != 0:
+            query = "SELECT * FROM Features WHERE carFeature=%s"
+            feature_dups = db.execute_query(
+                db_connection=db_conn,
+                query=query,
+                query_params=(usr_feature,)).fetchall()
+
+            # no duplicate, add new feature
+            if len(feature_dups) == 0:
+                query = "INSERT INTO Features (carFeature) VALUES (%s);"
+                db.execute_query(
+                    db_connection=db_conn,
+                    query=query,
+                    query_params=(usr_feature,))
+                sel_features.append(usr_feature)
+            # duplicate, associate existing feature with new listing
+            else:
+                sel_features.append(feature_dups[0]['carFeature']) 
+
+        # add all features associated with listing into featuresListings
         if len(sel_features) > 0:
             format_str = ','.join(['%s'] * len(sel_features))
             query = "SELECT featureID FROM Features WHERE carFeature IN (" + \
