@@ -10,8 +10,11 @@ def validate_new_listing(form_data):
     """
     error = None
     today = date.today()
-    form_date = form_data['expiration'].split('-')
-    expiration_date = date(month=int(form_date[1]), day=int(form_date[2]), year=int(form_date[0]))
+    try:
+        form_date = form_data['expiration'].split('-')
+        expiration_date = date(month=int(form_date[1]), day=int(form_date[2]), year=int(form_date[0]))
+    except:
+        expiration_date = None
 
     if not form_data['year'] or form_data['year'] == 'Select year':
         error = "Please add a year to this listing."
@@ -29,8 +32,8 @@ def validate_new_listing(form_data):
         error = "Please add an appropriate mileage to this listing."
         print(error)
         return error
-    elif not form_data['expiration'] or expiration_date <= today:
-        error = "Please add an expiration date that is at least 1 day away to this listing."
+    elif not form_data['expiration'] or expiration_date is None or expiration_date <= today:
+        error = "Please add an expiration date that is at least 1 day from today to this listing."
         print(error)
         return error
     else:
