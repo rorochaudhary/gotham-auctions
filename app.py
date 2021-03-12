@@ -174,8 +174,6 @@ def submit_listing():
 
         return redirect(url_for('root'))
 
-    # return render_template('submit_listing.j2', features=features, makes=makes, years=years)
-
 
 @ app.route('/profile', methods=['GET', 'POST'])
 def profile():
