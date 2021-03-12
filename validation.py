@@ -1,4 +1,6 @@
 # validation functions for submit listing, photo with listing, and place bid
+from datetime import date
+
 def validate_new_listing(form_data):
     """
     validates form data from submit_listing for required fields:
@@ -7,6 +9,9 @@ def validate_new_listing(form_data):
     return error -- str or None
     """
     error = None
+    today = date.today()
+    form_date = form_data['expiration'].split('-')
+    expiration_date = date(month=int(form_date[1]), day=int(form_date[2]), year=int(form_date[0]))
 
     if not form_data['year'] or form_data['year'] == 'Select year':
         error = "Please add a year to this listing."
@@ -20,12 +25,12 @@ def validate_new_listing(form_data):
         error = "Please add a model to this listing."
         print(error)
         return error
-    elif not form_data['mileage']:
-        error = "Please add a mileage to this listing."
+    elif not form_data['mileage'] or int(form_data['mileage']) < 0:
+        error = "Please add an appropriate mileage to this listing."
         print(error)
         return error
-    elif not form_data['expiration']:
-        error = "Please add an expiration date to this listing."
+    elif not form_data['expiration'] or expiration_date <= today:
+        error = "Please add an expiration date that is at least 1 day away to this listing."
         print(error)
         return error
     else:
