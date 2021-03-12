@@ -82,22 +82,20 @@ def place_bid(list_id):
 @app.route('/submit-listing', methods=['GET', 'POST'])
 @auth.login_required
 def submit_listing():
-    # display standard features on form
+    # features, years and car makes needed in both GET and POST requests
     db_conn = db.connect_to_database()
+    query = "SELECT carFeature FROM Features WHERE featureID BETWEEN 1 AND 4;"
+    features = db.execute_query(db_connection=db_conn, query=query).fetchall()
+    makes = []
+    years = [_ for _ in range(date.today().year + 1, 1894, -1)]
+    
+    with open('.\\static\\misc\\car_manufacturers.txt', 'r') as manufacturers:
+        make = manufacturers.readline().rstrip("\n")
+        while make != '':
+            makes.append(make)
+            make = manufacturers.readline().rstrip("\n")
 
     if request.method == "GET":
-        # gather features, years, and car makes and send to front end
-        query = "SELECT carFeature FROM Features WHERE featureID BETWEEN 1 AND 4;"
-        features = db.execute_query(db_connection=db_conn, query=query).fetchall()
-        makes = []
-        years = [_ for _ in range(date.today().year + 1, 1894, -1)]
-        
-        with open('.\\static\\misc\\car_manufacturers.txt', 'r') as manufacturers:
-            make = manufacturers.readline().rstrip("\n")
-            while make != '':
-                makes.append(make)
-                make = manufacturers.readline().rstrip("\n")
-        
         return render_template('submit_listing.j2', features=features, makes=makes, years=years)
 
     if request.method == 'POST':
@@ -106,7 +104,7 @@ def submit_listing():
 
         if error:
             flash(error, 'danger')
-            return render_template('submit_listing.j2', features=features)
+            return render_template('submit_listing.j2', features=features, makes=makes, years=years)
 
         # validated, parse form and add listing
         make = data['make']
