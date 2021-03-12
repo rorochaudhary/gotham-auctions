@@ -84,8 +84,21 @@ def place_bid(list_id):
 def submit_listing():
     # display standard features on form
     db_conn = db.connect_to_database()
-    query = "SELECT carFeature FROM Features WHERE featureID BETWEEN 1 AND 4;"
-    features = db.execute_query(db_connection=db_conn, query=query).fetchall()
+
+    if request.method == "GET":
+        # gather features, years, and car makes and send to front end
+        query = "SELECT carFeature FROM Features WHERE featureID BETWEEN 1 AND 4;"
+        features = db.execute_query(db_connection=db_conn, query=query).fetchall()
+        makes = []
+        years = [_ for _ in range(date.today().year + 1, 1894, -1)]
+        
+        with open('.\\static\\misc\\car_manufacturers.txt', 'r') as manufacturers:
+            make = manufacturers.readline().rstrip("\n")
+            while make != '':
+                makes.append(make)
+                make = manufacturers.readline().rstrip("\n")
+        
+        return render_template('submit_listing.j2', features=features, makes=makes, years=years)
 
     if request.method == 'POST':
         data = request.form
@@ -161,7 +174,7 @@ def submit_listing():
 
         return redirect(url_for('root'))
 
-    return render_template('submit_listing.j2', features=features)
+    # return render_template('submit_listing.j2', features=features, makes=makes, years=years)
 
 
 @ app.route('/profile', methods=['GET', 'POST'])
