@@ -89,7 +89,7 @@ def submit_listing():
     makes = []
     years = [_ for _ in range(date.today().year + 1, 1894, -1)]
     
-    with open('.\\static\\misc\\car_manufacturers.txt', 'r') as manufacturers:
+    with open('./static/misc/car_manufacturers.txt', 'r') as manufacturers:
         make = manufacturers.readline().rstrip("\n")
         while make != '':
             makes.append(make)
