@@ -56,7 +56,7 @@ def place_bid(list_id):
         db_conn = db.connect_to_database()
 
         # check if higher than current bid on listing
-        query = "SELECT l.listingID, l.bidID, b.bidAmt as amount FROM listings l INNER JOIN bids b ON l.bidID = b.bidID WHERE l.listingID = %s;"
+        query = "SELECT l.listingID, l.bidID, b.bidAmt as amount FROM Listings l INNER JOIN Bids b ON l.bidID = b.bidID WHERE l.listingID = %s;"
         high_bid = db.execute_query(db_connection=db_conn, query=query,
                                     query_params=(list_id,)).fetchone()
 
