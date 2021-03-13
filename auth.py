@@ -39,7 +39,6 @@ def register():
             lname = request.form['lname']
             email = request.form['email']
             date_joined = date.today().strftime("%Y-%m-%d")
-            # NOTE: add email validation - check if email already exists
             db.execute_query(
                 db_conn,
                 'INSERT INTO Users (userName, password, firstName, lastName, email, dateJoined) VALUES (%s, %s, %s, %s, %s, %s)',
