@@ -84,7 +84,8 @@ def place_bid(list_id):
 def submit_listing():
     # features, years and car makes needed in both GET and POST requests
     db_conn = db.connect_to_database()
-    query = "SELECT carFeature FROM Features WHERE featureID BETWEEN 1 AND 4;"
+    # query = "SELECT carFeature FROM Features WHERE featureID BETWEEN 1 AND 4;"
+    query = "SELECT carFeature FROM Features;"
     features = db.execute_query(db_connection=db_conn, query=query).fetchall()
     makes = []
     years = [_ for _ in range(date.today().year + 1, 1894, -1)]
