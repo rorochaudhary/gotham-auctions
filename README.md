@@ -1,6 +1,8 @@
 # gotham-auctions
 The combination of average car prices increasing within recent years coupled with recent technological advancements abstracting the driver from the traditional feeling of 'connectedness' on the road leaves the modern car enthusiast wanting more. Enter Gotham Auctions, a full-stack car auction website that supports car enthusiasts finding the car of their dreams.
 
+![Gotham Auctions in Action](/static/img/gotham_demo.gif)
+
 ## Getting Started (Local Version)
 These instructions will get you started with a local version of this app for which you can develop, explore, and test.
 
